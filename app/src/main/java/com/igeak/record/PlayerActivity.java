@@ -250,11 +250,14 @@ public class PlayerActivity extends Activity implements View.OnClickListener, Me
             try {
                 int duration;
                 int currentPosition;
-                while ((currentPosition = player.getCurrentPosition())
-                        < (duration = player.getDuration())) {
+                float currentRatio = 0.0f;
+                while (((currentPosition = player.getCurrentPosition())
+                        < (duration = player.getDuration())) && (currentRatio <= 0.99f)) {
                     float ratio = duration == 0 ? 0 : (float) currentPosition / (float) duration;
-                    publishProgress(ratio);
-                    Thread.sleep(100);
+                    if (ratio >= currentRatio) {
+                        currentRatio = currentRatio + 0.01f;
+                        publishProgress(currentRatio);
+                    }
                 }
             } catch (Exception e) {
                 Log.e(MainActivity.LOG_TAG, "prepare() failed");
