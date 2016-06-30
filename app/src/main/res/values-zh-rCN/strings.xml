@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">录音机</string>
+    <string name="action_settings">设置</string>
+
+     <string name="versionName">版本号:</string>
+     
+     <string name="about">关于</string>
+     <string name="about_content">最方便的语音备忘录，只为你的GEAK Watch</string>
+     
+     <string name="dialog_btn_ok">确认</string>
+     <string name="dialog_btn_cancel">取消</string>
+     <string name="dialog_msg_record_end">录音完毕是否保存?</string>
+     <string name="dialog_msg_file_delete">您确定删除此录音吗?</string>
+     
+     <string name="toast_file_not_exist">录音文件不存在</string>
+     <string name="toast_play_start_failed">播放失败！</string>
+     <string name="toast_play_stop_failed">停止失败！</string>
+     <string name="toast_play_error">播放错误！</string>
+     
+     <string name="no_record_file">您还没有录音！</string>
+     
+     <string name="toast_play_bt_headset">请连接蓝牙耳机！</string>
+ <string name="record">录音</string>
+</resources>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context="com.igeak.record.MainActivity"
+                tools:deviceIds="wear_round">
+
+
+    <ImageView
+        android:id="@+id/outerrecord"
+        android:layout_width="131px"
+        android:layout_height="131px"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="57px"
+        android:background="@drawable/outerrecord"
+        android:visibility="gone"
+    />
+    <ImageView
+        android:id="@+id/middlerecord"
+        android:layout_width="105px"
+        android:layout_height="105px"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="70px"
+        android:background="@drawable/middlerecord"
+        android:visibility="gone"
+
+    />
+
+    <ImageView
+        android:id="@+id/record"
+        android:layout_width="130px"
+        android:layout_height="130px"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="115px"
+        android:background="@drawable/bigrecord"
+    />
+
+
+    <RelativeLayout
+        android:id="@+id/rlcontrol"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="61px"
+        android:visibility="gone">
+
+        <ImageButton
+            android:id="@+id/record_setup"
+            android:layout_width="58px"
+            android:layout_height="58px"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/setup_selector"/>
+
+        <ImageButton
+            android:id="@+id/record_pause"
+            android:layout_width="58px"
+            android:layout_height="58px"
+            android:layout_marginRight="15px"
+            android:layout_toLeftOf="@id/record_setup"
+            android:background="@drawable/pause_selector"
+
+
+        />
+
+        <ImageButton
+            android:id="@+id/record_back"
+            android:layout_width="58px"
+            android:layout_height="58px"
+            android:layout_marginLeft="15px"
+            android:layout_toRightOf="@id/record_setup"
+            android:background="@drawable/back_selector"
+
+        />
+    </RelativeLayout>
+
+    <Chronometer
+        android:id="@+id/time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/rlcontrol"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="142px"
+        android:textColor="@color/white"
+        android:visibility="gone"
+    />
+
+
+</RelativeLayout>

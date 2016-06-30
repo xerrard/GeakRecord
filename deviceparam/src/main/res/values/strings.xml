@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">DeviceParam</string>
+    <string name="hello_round">Hello Round World!</string>
+    <string name="hello_square">Hello Square World!</string>
+
+    <string name="string_ldpi">ldpi</string>
+    <string name="string_mdpi">mdpi</string>
+    <string name="string_hdpi">hdpi</string>
+    <string name="string_xhdpi">xhdpi</string>
+</resources>

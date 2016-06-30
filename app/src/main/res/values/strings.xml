@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">GeakRecord</string>
+    <string name="hello_round">Hello Round World!</string>
+    <string name="hello_square">Hello Square World!</string>
+    <string name="versionName">Version:</string>
+
+    <string name="about">About</string>
+    <string name="about_content">The most convenient voice memos for GEAK Watch</string>
+
+    <string name="dialog_btn_ok">Confirm</string>
+    <string name="dialog_btn_cancel">Cancel</string>
+    <string name="dialog_msg_record_end">Save record file?</string>
+    <string name="dialog_msg_file_delete">Delete record file?</string>
+
+    <string name="toast_file_not_exist">File not exist</string>
+    <string name="toast_play_start_failed">Start play failed！</string>
+    <string name="toast_play_stop_failed">Stop play failed！</string>
+    <string name="toast_play_error">Play error！</string>
+
+    <string name="no_record_file">No Record!</string>
+
+    <string name="toast_play_bt_headset">Please connect bluetooth headset！</string>
+    <string name="record">record</string>
+</resources>

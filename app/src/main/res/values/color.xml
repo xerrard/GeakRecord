@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="light_progress_color">#fff77d27</color>
+     <color name="dark_progress_color">#fff77d27</color>
+      <color name="light_bg_color">#ff000000</color>
+       <color name="dark_bg_color">#ff3e3c42</color>
+</resources>
