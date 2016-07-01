@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -171,11 +172,11 @@ public class PlayerActivity extends Activity implements View.OnClickListener, Me
     }
 
     private void playMusic() {
-//        if (!isBlueToothHeadsetConnected()) {
-//            Toast.makeText(PlayerActivity.this, R.string.toast_play_bt_headset, Toast.LENGTH_LONG)
-//                    .show();
-//            return;
-//        }
+        if (!isBlueToothHeadsetConnected()) {
+            Toast.makeText(PlayerActivity.this, R.string.toast_play_bt_headset, Toast.LENGTH_LONG)
+                    .show();
+            return;
+        }
         player.start();
         task = new MediaObserver();
         task.execute();
