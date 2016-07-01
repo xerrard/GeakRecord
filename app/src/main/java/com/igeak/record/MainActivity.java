@@ -1,11 +1,8 @@
 package com.igeak.record;
 
-import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.MediaRecorder;
 import android.os.Bundle;
@@ -13,13 +10,9 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.widget.Chronometer;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-
-import com.github.lassana.recorder.AudioRecorder;
-import com.github.lassana.recorder.AudioRecorderBuilder;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -72,57 +65,92 @@ public class MainActivity extends Activity implements View.OnClickListener {
         mBackIb.setOnClickListener(MainActivity.this);
         mSetupIb.setOnClickListener(MainActivity.this);
         mPauseIb.setOnClickListener(MainActivity.this);
+
+        initRecord();
+
     }
 
 
     @Override
     public void onClick(final View view) {
-
-        if (state == STATE_INIT) {
-            if (view.getId() == R.id.record) {
-                recordAnimation1();
+        if (state == STATE_PRE_RECORD) {
+            if (view.getId() == R.id.record_setup) {
+                record();
+            }
+        } else if (state == STATE_RECORDING) {
+            if (view.getId() == R.id.record_back) {
+                queryStopRecord();
+            } else if (view.getId() == R.id.record_pause) {
+                pauseRecord();
+            } else if (view.getId() == R.id.record_setup) {
+                stopRecord(); //先停止录，然后问是否保存
                 final Timer timer = new Timer();
-
                 timer.schedule(new TimerTask() {
                     @Override
                     public void run() {
                         mTimeTv.post(new Runnable() {
                             @Override
                             public void run() {
-                                preRecord();
+                                querySaveRecord();
                                 timer.cancel();
                             }
                         });
                     }
-                }, 1000);
-
-            }
-        } else if (state == STATE_PRE_RECORD) {
-            if (view.getId() == R.id.record_setup) {
-                record();
-            }
-
-        } else if (state == STATE_RECORDING) {
-            if (view.getId() == R.id.record_back) {
-                finish();
-            } else if (view.getId() == R.id.record_pause) {
-                pauseRecord();
-            } else if (view.getId() == R.id.record_setup) {
-                recordAnimation2();
-                stopRecord();
+                }, Const.ANIMATION_LONG);
             }
         }
     }
 
 
-    private void reInitRecord() {
-        mRecordIv.setVisibility(View.VISIBLE);
-        recordAnimation3();
-        mRecordOutTv.setVisibility(View.GONE);
-        mRecordMidTv.setVisibility(View.GONE);
-        mTimeTv.setVisibility(View.GONE);
-        mControlRl.setVisibility(View.GONE);
+    private void initRecord() {
+        final Timer timer = new Timer();
         state = STATE_INIT;
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                mTimeTv.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        recordAnimation1();
+                        final Timer timer1 = new Timer();
+                        timer1.schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                mTimeTv.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        preRecord();
+                                        timer1.cancel();
+                                    }
+                                });
+                            }
+                        }, Const.ANIMATION_LONG);
+                        timer.cancel();
+                    }
+                });
+            }
+        }, Const.ANIMATION_LONG);
+
+    }
+
+    private void reInitRecord() {
+        state = STATE_INIT;
+        recordAnimation1Quick();
+        final Timer timer = new Timer();
+
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                mTimeTv.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        preRecord();
+                        timer.cancel();
+                    }
+                });
+            }
+        }, Const.ANIMATION_MID);
+
     }
 
     private void preRecord() {
@@ -162,26 +190,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
 
     private void stopRecord() {
+        recordAnimation2();  //图从小变大，
         mRecordMidTv.setVisibility(View.GONE);
         mRecordOutTv.setVisibility(View.GONE);
         mControlRl.setVisibility(View.GONE);
-
         mediaStopRecording();
         mTimeTv.stop();
-        //mTimeTv.setBase(SystemClock.elapsedRealtime());
-        final Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                mTimeTv.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        querySaveRecord();
-                        timer.cancel();
-                    }
-                });
-            }
-        }, 1000);
 
     }
 
@@ -193,16 +207,30 @@ public class MainActivity extends Activity implements View.OnClickListener {
         ObjectAnimator animation1 = ObjectAnimator.ofFloat(mRecordIv, "scaleY", 0.65384615f);
         ObjectAnimator animation2 = ObjectAnimator.ofFloat(mRecordIv, "scaleX", 0.65384615f);
         ObjectAnimator animation3 = ObjectAnimator.ofFloat(mRecordIv, "translationY", -57.0f);
+        //ObjectAnimator animation4 = ObjectAnimator.ofFloat(mTimeTv, "translationY", 1.0f);
         //此处的-57一直没搞清楚什么原因，原本应该是-35
         AnimatorSet animatorSet = new AnimatorSet();
         animatorSet.playTogether(animation1, animation2, animation3);
-        animatorSet.setDuration(1000).start();
-
-
+        animatorSet.setDuration(Const.ANIMATION_LONG).start();
     }
 
     /**
-     * 动画2：record大图从小变大，转换位置， time 转换位置
+     * 动画1：record大图从大变小，并转换位置,速度快的
+     */
+    private void recordAnimation1Quick() {
+        ObjectAnimator animation1 = ObjectAnimator.ofFloat(mRecordIv, "scaleY", 0.65384615f);
+        ObjectAnimator animation2 = ObjectAnimator.ofFloat(mRecordIv, "scaleX", 0.65384615f);
+        ObjectAnimator animation3 = ObjectAnimator.ofFloat(mRecordIv, "translationY", -57.0f);
+        ObjectAnimator animation4 = ObjectAnimator.ofFloat(mTimeTv, "translationY", 1.0f);
+        //此处的-57一直没搞清楚什么原因，原本应该是-35
+        AnimatorSet animatorSet = new AnimatorSet();
+        animatorSet.playTogether(animation1, animation2, animation3, animation4);
+        animatorSet.setDuration(Const.ANIMATION_MID).start();
+    }
+
+
+    /**
+     * 动画2：点击保存，record大图从小变大，转换位置， time 转换位置
      */
     private void recordAnimation2() {
         ObjectAnimator animation1 = ObjectAnimator.ofFloat(mTimeTv, "translationY", 56.0f);
@@ -211,7 +239,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         ObjectAnimator animation4 = ObjectAnimator.ofFloat(mRecordIv, "translationY", -18.0f);
         AnimatorSet animatorSet = new AnimatorSet();
         animatorSet.playTogether(animation1, animation2, animation3, animation4);
-        animatorSet.setDuration(1000).start();
+        animatorSet.setDuration(Const.ANIMATION_MID).start();
     }
 
 
@@ -225,7 +253,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         ObjectAnimator animation4 = ObjectAnimator.ofFloat(mRecordIv, "scaleX", 1.0f);
         AnimatorSet animatorSet = new AnimatorSet();
         animatorSet.playTogether(animation1, animation2, animation3, animation4);
-        animatorSet.setDuration(1000).start();
+        animatorSet.setDuration(Const.ANIMATION_MID).start();
     }
 
     /**
@@ -236,48 +264,52 @@ public class MainActivity extends Activity implements View.OnClickListener {
         mRecordOutTv.setVisibility(View.VISIBLE);
         ObjectAnimator animator1 = ObjectAnimator.ofFloat(mRecordMidTv, "alpha", 0f, 1f);
         animator1.setRepeatCount(10);
-        animator1.setDuration(1000);
+        animator1.setDuration(Const.ANIMATION_SHORT);
         ObjectAnimator animator2 = ObjectAnimator.ofFloat(mRecordMidTv, "alpha", 0f, 1f);
         animator2.setRepeatCount(10);
-        animator2.setDuration(1000);
+        animator2.setDuration(Const.ANIMATION_SHORT);
         ObjectAnimator.ofFloat(mRecordOutTv, "alpha", 0f, 1f).setRepeatCount(10);
         AnimatorSet set = new AnimatorSet();
-        set.playTogether(animator1,animator2);
+        set.playTogether(animator1, animator2);
         set.start();
     }
 
     private void querySaveRecord() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(R.string.dialog_msg_record_end);
+        Intent intent = new Intent(this, QuerySave.class);
+        startActivityForResult(intent, Const.REQUESTCODE_QUERY_SAVE);
+    }
 
-        // builder.setTitle("");
-        builder.setPositiveButton(R.string.dialog_btn_ok, new DialogInterface.OnClickListener() {
+    private void queryStopRecord() {
+        Intent intent = new Intent(this, QueryStopRecord.class);
+        startActivityForResult(intent, Const.REQUESTCODE_QUERY_STOP_RECORD);
+    }
 
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                Intent intent = new Intent(MainActivity.this, ListActivity.class);
-                startActivity(intent);
-                reInitRecord();
-            }
-        });
-        builder.setNegativeButton(R.string.dialog_btn_cancel, new DialogInterface.OnClickListener
-                () {
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+        if (requestCode == Const.REQUESTCODE_QUERY_SAVE) {
+            if (resultCode == Const.RESULTCODE_OK) {
+                startActivity(new Intent(this, ListActivity.class));
+            } else if (resultCode == Const.RESULTCODE_CANCEL) {
                 try {
                     deleteFile();
                 } catch (Exception e) {
                     Log.e(LOG_TAG, "cancel save Record failed " + e.getMessage());
                 }
-                dialog.dismiss();
-                reInitRecord();
             }
-        });
+            reInitRecord();
+        } else if (requestCode == Const.REQUESTCODE_QUERY_STOP_RECORD) {
+            if (resultCode == Const.RESULTCODE_OK) {
+                stopRecord();
+                reInitRecord();
+            } else if (resultCode == Const.RESULTCODE_CANCEL) {
 
-        builder.create().show();
+            }
+        }
+
     }
+
 
     private void mediaRecording() {
         createFilePath();
@@ -305,7 +337,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
             recorder.stop();
             recorder.release();
             recorder = null;
-
         } catch (Exception e) {
             Log.e(LOG_TAG, "stopRecording failed " + e.getMessage());
         }

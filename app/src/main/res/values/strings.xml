@@ -11,6 +11,7 @@
     <string name="dialog_btn_cancel">Cancel</string>
     <string name="dialog_msg_record_end">Save record file?</string>
     <string name="dialog_msg_file_delete">Delete record file?</string>
+    <string name="dialog_msg_stop_record">Stop record?</string>
 
     <string name="toast_file_not_exist">File not exist</string>
     <string name="toast_play_start_failed">Start play failed！</string>
@@ -21,4 +22,6 @@
 
     <string name="toast_play_bt_headset">Please connect bluetooth headset！</string>
     <string name="record">record</string>
+
+    <string name="are_you_sure">Are you sure?</string>
 </resources>

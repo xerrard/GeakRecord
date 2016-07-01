@@ -135,16 +135,18 @@ public class PlayerActivity extends Activity implements View.OnClickListener, Me
         }
     }
 
+
     private void queryDelete() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(R.string.dialog_msg_file_delete);
+        Intent intent = new Intent(this, QueryDelete.class);
+        startActivityForResult(intent,Const.REQUESTCODE_QUERY_DELETE);
+    }
 
-        // builder.setTitle("");
-        builder.setPositiveButton(R.string.dialog_btn_ok, new DialogInterface.OnClickListener() {
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
+        if(requestCode==Const.REQUESTCODE_QUERY_DELETE){
+            if(resultCode==Const.RESULTCODE_OK){
                 try {
                     pauseMusic(); //先暂停播放
                     delete();
@@ -153,17 +155,11 @@ public class PlayerActivity extends Activity implements View.OnClickListener, Me
                 }
                 finish();
             }
-        });
-        builder.setNegativeButton(R.string.dialog_btn_cancel, new DialogInterface.OnClickListener
-                () {
+            else if(resultCode==Const.RESULTCODE_CANCEL){
 
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
             }
-        });
+        }
 
-        builder.create().show();
     }
 
 
