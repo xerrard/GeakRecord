@@ -16,5 +16,26 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
         </android.support.wearable.view.WearableListView>
+
+        <RelativeLayout
+            android:id="@+id/item_img_rl"
+            android:layout_width="match_parent"
+            android:layout_height="99px"
+        >
+
+            <ImageView
+                android:layout_width="59px"
+                android:layout_height="59px"
+                android:layout_centerInParent="true"
+                android:background="@drawable/smallrecord"
+            />
+        </RelativeLayout>
+
+        <ImageView
+            android:layout_gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="163px"
+            android:background="@drawable/rect"/>
+
     </FrameLayout>
 </android.support.wearable.view.BoxInsetLayout>

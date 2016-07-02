@@ -2,6 +2,7 @@ package com.igeak.record;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -28,13 +29,14 @@ public class WearListActivity extends Activity
 
     //String[] elements = { "List Item 1", "List Item 2" };
     File[] files;
+    private RelativeLayout mImgRecordRl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         files = getAllRecordFileNames();
         setContentView(R.layout.my_list_activity);
-
+        mImgRecordRl = (RelativeLayout) findViewById(R.id.item_img_rl);
         // Get the list component from the layout of the activity
         WearableListView listView =
                 (WearableListView) findViewById(R.id.wearable_list);
@@ -44,6 +46,24 @@ public class WearListActivity extends Activity
 
         // Set a click listener
         listView.setClickListener(this);
+
+        //listView.animateToCenter();
+        listView.addOnCentralPositionChangedListener(new WearableListView
+                .OnCentralPositionChangedListener() {
+            @Override
+            public void onCentralPositionChanged(int centerPosition) {
+                /**
+                 * 当选中第一个的时候，显示record图标
+                 */
+                if (centerPosition > 0) {
+                    mImgRecordRl.setVisibility(View.GONE);
+                } else {
+                    mImgRecordRl.setVisibility(View.VISIBLE);
+                }
+
+            }
+        });
+
     }
 
 
@@ -64,17 +84,27 @@ public class WearListActivity extends Activity
     public void onClick(WearableListView.ViewHolder v) {
         Integer tag = (Integer) v.itemView.getTag();
         // use this data to complete some action ...
+        playMusic(tag);
     }
 
     @Override
     public void onTopEmptyRegionClick() {
+
     }
+
+    private void playMusic(int currentIndex) {
+        Intent intent = new Intent(this, PlayerActivity.class);
+        intent.putExtra("index", currentIndex);
+        startActivity(intent);
+    }
+
 
 
     private static final class MyListAdapter extends WearableListView.Adapter {
         private File[] files;
         private final Context mContext;
         private final LayoutInflater mInflater;
+
 
         // Provide a suitable constructor (depends on the kind of dataset)
         public MyListAdapter(Context context, File[] files) {
@@ -84,7 +114,7 @@ public class WearListActivity extends Activity
         }
 
         // Provide a reference to the type of views you're using
-        public static class ItemViewHolder extends WearableListView.ViewHolder {
+        public static final class ItemViewHolder extends WearableListView.ViewHolder {
 
             private RelativeLayout mImgRl;
             private ImageView mRecordIv;
@@ -95,8 +125,11 @@ public class WearListActivity extends Activity
             private TextView mTimeTv;
             private TextView mDuationTv;
 
-            private RelativeLayout mInfoRl;
-            private TextView mSmallNameTv;
+            private RelativeLayout mInfoupRl;
+            private TextView mSmallNameupTv;
+
+            private RelativeLayout mInfodownRl;
+            private TextView mSmallNamedownTv;
 
 
             public ItemViewHolder(View itemView) {
@@ -111,8 +144,11 @@ public class WearListActivity extends Activity
                 mTimeTv = (TextView) itemView.findViewById(R.id.record_time);
                 mDuationTv = (TextView) itemView.findViewById(R.id.record_duration);
 
-                mInfoRl = (RelativeLayout) itemView.findViewById(R.id.item_info_rl);
-                mSmallNameTv = (TextView) itemView.findViewById(R.id.record_name_small);
+                mInfoupRl = (RelativeLayout) itemView.findViewById(R.id.item_info_rl_up);
+                mSmallNameupTv = (TextView) itemView.findViewById(R.id.record_name_small_up);
+
+                mInfodownRl = (RelativeLayout) itemView.findViewById(R.id.item_info_rl_down);
+                mSmallNamedownTv = (TextView) itemView.findViewById(R.id.record_name_small_down);
             }
         }
 
@@ -120,7 +156,7 @@ public class WearListActivity extends Activity
         // (invoked by the WearableListView's layout manager)
         @Override
         public WearableListView.ViewHolder onCreateViewHolder(ViewGroup parent,
-                                                              int viewType) {
+                                                               int viewType) {
             // Inflate our custom layout for list items
             return new ItemViewHolder(mInflater.inflate(R.layout.list_item, null));
         }
@@ -133,8 +169,8 @@ public class WearListActivity extends Activity
                                      int position) {
             ItemViewHolder itemHolder = (ItemViewHolder) holder;
 
-            if (position > 0) {
-                int currentIndex = position - 1;
+            if (position >= 0) {
+                int currentIndex = position;
 
                 File file = files[currentIndex];
                 String dateString = file.getName().substring(3);
@@ -167,9 +203,10 @@ public class WearListActivity extends Activity
                     String name = mContext.getString(R.string.record)
                             + " " + String.format("%02d", currentIndex + 1);
                     itemHolder.mNameTv.setText(name);
-                    itemHolder.mSmallNameTv.setText(name);
+                    itemHolder.mSmallNameupTv.setText(name);
+                    itemHolder.mSmallNamedownTv.setText(name);
                     itemHolder.mDateTv.setText(dateText);
-                    itemHolder.mDateTv.setText(timeText);
+                    itemHolder.mTimeTv.setText(timeText);
                     itemHolder.mDuationTv.setText(duration);
 
                     itemHolder.mImgRl.setVisibility(View.GONE);
@@ -179,7 +216,7 @@ public class WearListActivity extends Activity
                 }
             } else {
                 itemHolder.mImgRl.setVisibility(View.VISIBLE);
-                itemHolder.mInfoRl.setVisibility(View.GONE);
+                itemHolder.mInfoupRl.setVisibility(View.GONE);
                 itemHolder.mDetailRl.setVisibility(View.GONE);
             }
 
@@ -190,7 +227,7 @@ public class WearListActivity extends Activity
         // (invoked by the WearableListView's layout manager)
         @Override
         public int getItemCount() {
-            return files.length + 1;
+            return files.length;
         }
     }
 

@@ -50,6 +50,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
         initView();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (STATE_RECORDSTOPED == state) {
+            reInitRecord();
+        }
+    }
+
     private void initView() {
         setContentView(R.layout.round_activity_main);
         mRecordIv = (ImageView) findViewById(R.id.record);
@@ -185,6 +193,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         mediaStopRecording();
         mTimeTv.stop();
         deleteFile();
+        state = STATE_RECORDSTOPED;
         reInitRecord();
     }
 
@@ -290,18 +299,22 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         if (requestCode == Const.REQUESTCODE_QUERY_SAVE) {
             if (resultCode == Const.RESULTCODE_OK) {
-                startActivity(new Intent(this, ListActivity.class));
+                startActivity(new Intent(this, WearListActivity.class));
+                state = STATE_RECORDSTOPED;
             } else if (resultCode == Const.RESULTCODE_CANCEL) {
                 try {
                     deleteFile();
+                    state = STATE_RECORDSTOPED;
+                    reInitRecord();
                 } catch (Exception e) {
                     Log.e(LOG_TAG, "cancel save Record failed " + e.getMessage());
                 }
             }
-            reInitRecord();
+
         } else if (requestCode == Const.REQUESTCODE_QUERY_STOP_RECORD) {
             if (resultCode == Const.RESULTCODE_OK) {
                 stopRecord();
+                state = STATE_RECORDSTOPED;
                 reInitRecord();
             } else if (resultCode == Const.RESULTCODE_CANCEL) {
 
