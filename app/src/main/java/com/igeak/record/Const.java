@@ -11,8 +11,8 @@ public class Const {
     public static final int RESULTCODE_OK = 2001;
     public static final int RESULTCODE_CANCEL = 2002;
 
-    public static final int ANIMATION_LONG = 2000;
-    public static final int ANIMATION_MID = 1000;
-    public static final int ANIMATION_SHORT = 500;
+    public static final int ANIMATION_LONG_2000 = 2000;
+    public static final int ANIMATION_LONG_1000 = 1000;
+    public static final int ANIMATION_LONG_500 = 500;
 
 }

@@ -1,5 +1,6 @@
 package com.igeak.record;
 
+import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
@@ -91,61 +92,36 @@ public class MainActivity extends Activity implements View.OnClickListener {
             } else if (view.getId() == R.id.record_pause) {
                 pauseRecord();
             } else if (view.getId() == R.id.record_setup) {
-                stopRecord(); //先停止录，然后问是否保存
-                final Timer timer = new Timer();
-                timer.schedule(new TimerTask() {
+                stopRecord(new MyAnimatorListener() {
                     @Override
-                    public void run() {
-                        mTimeTv.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                querySaveRecord();
-                                timer.cancel();
-                            }
-                        });
-                    }
-                }, Const.ANIMATION_LONG);
-            }
-        }
-    }
-
-
-    private void initRecord() {
-        final Timer timer = new Timer();
-        state = STATE_INIT;
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                mTimeTv.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        recordAnimation1();
-                        final Timer timer1 = new Timer();
-                        timer1.schedule(new TimerTask() {
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        final Timer timer = new Timer();
+                        timer.schedule(new TimerTask() {
                             @Override
                             public void run() {
                                 mTimeTv.post(new Runnable() {
                                     @Override
                                     public void run() {
-                                        preRecord();
-                                        timer1.cancel();
+                                        querySaveRecord();
+                                        timer.cancel();
                                     }
                                 });
                             }
-                        }, Const.ANIMATION_LONG);
-                        timer.cancel();
+                        }, Const.ANIMATION_LONG_1000);
                     }
                 });
             }
-        }, Const.ANIMATION_LONG);
-
+        }
     }
 
-    private void reInitRecord() {
-        state = STATE_INIT;
-        recordAnimation1Quick();
-        final Timer timer = new Timer();
 
+    /**
+     * 第一次进入，保持1s时间，然后动画切换到pre模式
+     */
+    private void initRecord() {
+        final Timer timer = new Timer();
+        state = STATE_INIT;
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -157,31 +133,60 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     }
                 });
             }
-        }, Const.ANIMATION_MID);
+        }, Const.ANIMATION_LONG_1000);
 
     }
 
+    private void reInitRecord() {
+        state = STATE_INIT;
+//        //recordAnimation1Quick();
+//        final Timer timer = new Timer();
+//
+//        timer.schedule(new TimerTask() {
+//            @Override
+//            public void run() {
+//                mTimeTv.post(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        preRecord();
+//                        timer.cancel();
+//                    }
+//                });
+//            }
+//        }, Const.ANIMATION_LONG_1000);
+        preRecord();
+
+    }
+
+    /**
+     * pre模式，主要做好动画，此时的事件只支持录音（见onclick）
+     */
     private void preRecord() {
-        mTimeTv.setVisibility(View.VISIBLE);
+
+        //mTimeTv.setVisibility(View.VISIBLE);
         mTimeTv.setBase(SystemClock.elapsedRealtime());
         mControlRl.setVisibility(View.VISIBLE);
         mSetupIb.setActivated(false);
         mPauseIb.setActivated(false);
         mBackIb.setActivated(false);
+        recordAnimation1();
+        recordAnimation2();
         state = STATE_PRE_RECORD;
     }
 
-
+    /**
+     * 进入录音状态，开启闪烁动画
+     */
     private void record() {
-        recordAnimation4();
-
-
+        mRecordMidTv.setVisibility(View.VISIBLE);
+        mRecordOutTv.setVisibility(View.VISIBLE);
+        recordAnimation3();
         mSetupIb.setActivated(true);
         mPauseIb.setActivated(true);
         mBackIb.setActivated(true);
-        mediaRecording(); //开始录音
         mTimeTv.setBase(SystemClock.elapsedRealtime());
         mTimeTv.start();
+        mediaRecording(); //开始录音
         state = STATE_RECORDING;
     }
 
@@ -198,13 +203,17 @@ public class MainActivity extends Activity implements View.OnClickListener {
     }
 
 
-    private void stopRecord() {
-        recordAnimation2();  //图从小变大，
+    /**
+     * 停止录音，处理好动画
+     */
+    private void stopRecord(Animator.AnimatorListener listener) {
+        recordAnimation4(listener);  //图从小变大，
         mRecordMidTv.setVisibility(View.GONE);
         mRecordOutTv.setVisibility(View.GONE);
         mControlRl.setVisibility(View.GONE);
-        mediaStopRecording();
         mTimeTv.stop();
+        mediaStopRecording();
+
 
     }
 
@@ -213,14 +222,16 @@ public class MainActivity extends Activity implements View.OnClickListener {
      * 动画1：record大图从大变小，并转换位置
      */
     private void recordAnimation1() {
+
         ObjectAnimator animation1 = ObjectAnimator.ofFloat(mRecordIv, "scaleY", 0.65384615f);
         ObjectAnimator animation2 = ObjectAnimator.ofFloat(mRecordIv, "scaleX", 0.65384615f);
         ObjectAnimator animation3 = ObjectAnimator.ofFloat(mRecordIv, "translationY", -57.0f);
-        //ObjectAnimator animation4 = ObjectAnimator.ofFloat(mTimeTv, "translationY", 1.0f);
+        ObjectAnimator animation4 = ObjectAnimator.ofFloat(mTimeTv, "translationY", 1.0f);
         //此处的-57一直没搞清楚什么原因，原本应该是-35
+
         AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.playTogether(animation1, animation2, animation3);
-        animatorSet.setDuration(Const.ANIMATION_LONG).start();
+        animatorSet.playTogether(animation1, animation2, animation3, animation4);
+        animatorSet.setDuration(Const.ANIMATION_LONG_1000).start();
     }
 
     /**
@@ -234,49 +245,57 @@ public class MainActivity extends Activity implements View.OnClickListener {
         //此处的-57一直没搞清楚什么原因，原本应该是-35
         AnimatorSet animatorSet = new AnimatorSet();
         animatorSet.playTogether(animation1, animation2, animation3, animation4);
-        animatorSet.setDuration(Const.ANIMATION_MID).start();
+        animatorSet.setDuration(Const.ANIMATION_LONG_1000).start();
     }
 
 
     /**
-     * 动画2：点击保存，record大图从小变大，转换位置， time 转换位置
+     * 动画2：time 和control的渐出，
      */
     private void recordAnimation2() {
+        ObjectAnimator animation1;
+        ObjectAnimator animation2;
+
+        ObjectAnimator animation3 = ObjectAnimator.ofFloat(mControlRl, "scaleY", 0.0f, 1.0f);
+        ObjectAnimator animation4 = ObjectAnimator.ofFloat(mControlRl, "scaleX", 0.0f, 1.0f);
+        AnimatorSet animatorSet = new AnimatorSet();
+        if (mTimeTv.getVisibility() == View.GONE) {
+            mTimeTv.setVisibility(View.VISIBLE);
+            animation1 = ObjectAnimator.ofFloat(mTimeTv, "scaleX", 0.0f, 1.0f);
+            animation2 = ObjectAnimator.ofFloat(mTimeTv, "scaleY", 0.0f, 1.0f);
+            animatorSet.playTogether(animation1, animation2, animation3, animation4);
+        }else {
+            animatorSet.playTogether(animation3, animation4);
+        }
+        animatorSet.setDuration(Const.ANIMATION_LONG_1000).start();
+    }
+
+
+    /**
+     * 动画4：点击保存，record大图从小变大，转换位置， time 转换位置
+     */
+    private void recordAnimation4(Animator.AnimatorListener listener) {
         ObjectAnimator animation1 = ObjectAnimator.ofFloat(mTimeTv, "translationY", 56.0f);
         ObjectAnimator animation2 = ObjectAnimator.ofFloat(mRecordIv, "scaleY", 1.0f);
         ObjectAnimator animation3 = ObjectAnimator.ofFloat(mRecordIv, "scaleX", 1.0f);
         ObjectAnimator animation4 = ObjectAnimator.ofFloat(mRecordIv, "translationY", -18.0f);
         AnimatorSet animatorSet = new AnimatorSet();
         animatorSet.playTogether(animation1, animation2, animation3, animation4);
-        animatorSet.setDuration(Const.ANIMATION_MID).start();
+        animatorSet.setDuration(Const.ANIMATION_LONG_1000).start();
+        animatorSet.addListener(listener);
     }
 
 
     /**
-     * 动画2：record，转换位置， time 转换位置
+     * 动画3：record背景闪烁
      */
     private void recordAnimation3() {
-        ObjectAnimator animation1 = ObjectAnimator.ofFloat(mTimeTv, "translationY", 0.0f);
-        ObjectAnimator animation2 = ObjectAnimator.ofFloat(mRecordIv, "translationY", 0.0f);
-        ObjectAnimator animation3 = ObjectAnimator.ofFloat(mRecordIv, "scaleY", 1.0f);
-        ObjectAnimator animation4 = ObjectAnimator.ofFloat(mRecordIv, "scaleX", 1.0f);
-        AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.playTogether(animation1, animation2, animation3, animation4);
-        animatorSet.setDuration(Const.ANIMATION_MID).start();
-    }
-
-    /**
-     * 动画4：record背景闪烁
-     */
-    private void recordAnimation4() {
-        mRecordMidTv.setVisibility(View.VISIBLE);
-        mRecordOutTv.setVisibility(View.VISIBLE);
         ObjectAnimator animator1 = ObjectAnimator.ofFloat(mRecordMidTv, "alpha", 0f, 1f);
-        animator1.setRepeatCount(10);
-        animator1.setDuration(Const.ANIMATION_SHORT);
+        animator1.setRepeatCount(20);
+        animator1.setDuration(Const.ANIMATION_LONG_1000);
         ObjectAnimator animator2 = ObjectAnimator.ofFloat(mRecordMidTv, "alpha", 0f, 1f);
-        animator2.setRepeatCount(10);
-        animator2.setDuration(Const.ANIMATION_SHORT);
+        animator2.setRepeatCount(20);
+        animator2.setDuration(Const.ANIMATION_LONG_1000);
         ObjectAnimator.ofFloat(mRecordOutTv, "alpha", 0f, 1f).setRepeatCount(10);
         AnimatorSet set = new AnimatorSet();
         set.playTogether(animator1, animator2);
@@ -313,9 +332,15 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         } else if (requestCode == Const.REQUESTCODE_QUERY_STOP_RECORD) {
             if (resultCode == Const.RESULTCODE_OK) {
-                stopRecord();
+                stopRecord(new MyAnimatorListener() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        reInitRecord();
+                    }
+                });
                 state = STATE_RECORDSTOPED;
-                reInitRecord();
+
             } else if (resultCode == Const.RESULTCODE_CANCEL) {
 
             }
@@ -379,5 +404,29 @@ public class MainActivity extends Activity implements View.OnClickListener {
             recorder = null;
         }
         super.onDestroy();
+    }
+
+
+    public class MyAnimatorListener implements Animator.AnimatorListener {
+
+        @Override
+        public void onAnimationStart(Animator animation) {
+
+        }
+
+        @Override
+        public void onAnimationEnd(Animator animation) {
+
+        }
+
+        @Override
+        public void onAnimationCancel(Animator animation) {
+
+        }
+
+        @Override
+        public void onAnimationRepeat(Animator animation) {
+
+        }
     }
 }
