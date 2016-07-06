@@ -53,7 +53,7 @@
             android:background="@drawable/setup_selector"/>
 
         <ImageButton
-            android:id="@+id/record_pause"
+            android:id="@+id/record_list"
             android:layout_width="58px"
             android:layout_height="58px"
             android:layout_marginRight="15px"

@@ -27,7 +27,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private static final int STATE_INIT = 0;
     private static final int STATE_PRE_RECORD = 1;
     private static final int STATE_RECORDING = 2;
-    private static final int STATE_RECORDSTOPED = 3;
+    //private static final int STATE_RECORDSTOPED = 3;
     //private static final int STATE_PAUSE = 4;
     public static String LOG_TAG = "geak_recorder";
     private String currentFileName;
@@ -41,9 +41,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private RelativeLayout mControlRl;
     private ImageButton mBackIb;
     private ImageButton mSetupIb;
-    private ImageButton mPauseIb;
+    private ImageButton mListIb;
     private int state = STATE_INIT;
 
+    AnimatorSet animatorSet3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,9 +55,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
     @Override
     protected void onResume() {
         super.onResume();
-        if (STATE_RECORDSTOPED == state) {
-            reInitRecord();
-        }
+//        if (STATE_RECORDSTOPED == state) {
+//            reInitRecord();
+//        }
     }
 
     private void initView() {
@@ -69,12 +70,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
         mControlRl = (RelativeLayout) findViewById(R.id.rlcontrol);
         mBackIb = (ImageButton) findViewById(R.id.record_back);
         mSetupIb = (ImageButton) findViewById(R.id.record_setup);
-        mPauseIb = (ImageButton) findViewById(R.id.record_pause);
+        mListIb = (ImageButton) findViewById(R.id.record_list);
         mRecordIv.setOnClickListener(MainActivity.this);
         mBackIb.setOnClickListener(MainActivity.this);
         mSetupIb.setOnClickListener(MainActivity.this);
-        mPauseIb.setOnClickListener(MainActivity.this);
-
+        mListIb.setOnClickListener(MainActivity.this);
+        mListIb.setActivated(true);
         initRecord();
 
     }
@@ -82,35 +83,19 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     @Override
     public void onClick(final View view) {
-        if (state == STATE_PRE_RECORD) {
+        if (view.getId() == R.id.record_list) {
+            if (state != STATE_RECORDING) {
+                startActivity(new Intent(this, WearListActivity.class));
+            }
+        } else if (state == STATE_PRE_RECORD) {
             if (view.getId() == R.id.record_setup) {
                 record();
             }
         } else if (state == STATE_RECORDING) {
             if (view.getId() == R.id.record_back) {
                 queryStopRecord();
-            } else if (view.getId() == R.id.record_pause) {
-                pauseRecord();
             } else if (view.getId() == R.id.record_setup) {
-                stopRecord(new MyAnimatorListener() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        super.onAnimationEnd(animation);
-                        final Timer timer = new Timer();
-                        timer.schedule(new TimerTask() {
-                            @Override
-                            public void run() {
-                                mTimeTv.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        querySaveRecord();
-                                        timer.cancel();
-                                    }
-                                });
-                            }
-                        }, Const.ANIMATION_LONG_1000);
-                    }
-                });
+                stopRecordToQuerySave();
             }
         }
     }
@@ -139,22 +124,19 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private void reInitRecord() {
         state = STATE_INIT;
-//        //recordAnimation1Quick();
-//        final Timer timer = new Timer();
-//
-//        timer.schedule(new TimerTask() {
-//            @Override
-//            public void run() {
-//                mTimeTv.post(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        preRecord();
-//                        timer.cancel();
-//                    }
-//                });
-//            }
-//        }, Const.ANIMATION_LONG_1000);
         preRecord();
+
+    }
+
+    private void reInitRecordnoAnimation() {
+        state = STATE_INIT;
+
+        mTimeTv.setBase(SystemClock.elapsedRealtime());
+        mControlRl.setVisibility(View.VISIBLE);
+        mSetupIb.setActivated(false);
+        //mListIb.setActivated(false);
+        mBackIb.setActivated(false);
+        state = STATE_PRE_RECORD;
 
     }
 
@@ -167,7 +149,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         mTimeTv.setBase(SystemClock.elapsedRealtime());
         mControlRl.setVisibility(View.VISIBLE);
         mSetupIb.setActivated(false);
-        mPauseIb.setActivated(false);
+        //mListIb.setActivated(false);
         mBackIb.setActivated(false);
         recordAnimation1();
         recordAnimation2();
@@ -178,11 +160,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
      * 进入录音状态，开启闪烁动画
      */
     private void record() {
+        mListIb.setActivated(false);
         mRecordMidTv.setVisibility(View.VISIBLE);
         mRecordOutTv.setVisibility(View.VISIBLE);
         recordAnimation3();
         mSetupIb.setActivated(true);
-        mPauseIb.setActivated(true);
+        //mListIb.setActivated(true);
         mBackIb.setActivated(true);
         mTimeTv.setBase(SystemClock.elapsedRealtime());
         mTimeTv.start();
@@ -190,31 +173,61 @@ public class MainActivity extends Activity implements View.OnClickListener {
         state = STATE_RECORDING;
     }
 
-    private void pauseRecord() {
-        mRecordMidTv.setVisibility(View.GONE);
-        mRecordOutTv.setVisibility(View.GONE);
-        mControlRl.setVisibility(View.GONE);
-
-        mediaStopRecording();
-        mTimeTv.stop();
-        deleteFile();
-        state = STATE_RECORDSTOPED;
-        reInitRecord();
-    }
+//    private void pauseRecord() {
+//        mRecordMidTv.setVisibility(View.GONE);
+//        mRecordOutTv.setVisibility(View.GONE);
+//        mControlRl.setVisibility(View.GONE);
+//
+//        mediaStopRecording();
+//        mTimeTv.stop();
+//        deleteFile();
+//        //state = STATE_RECORDSTOPED;
+//        reInitRecord();
+//    }
 
 
     /**
      * 停止录音，处理好动画
      */
-    private void stopRecord(Animator.AnimatorListener listener) {
+    private void stopRecordToQuerySave() {
+        Animator.AnimatorListener listener = new MyAnimatorListener() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                final Timer timer = new Timer();
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        mTimeTv.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                querySaveRecord();
+                                timer.cancel();
+                            }
+                        });
+                    }
+                }, Const.ANIMATION_LONG_1000);
+            }
+        };
+
         recordAnimation4(listener);  //图从小变大，
+        animatorSet3.cancel();
         mRecordMidTv.setVisibility(View.GONE);
         mRecordOutTv.setVisibility(View.GONE);
         mControlRl.setVisibility(View.GONE);
         mTimeTv.stop();
         mediaStopRecording();
+        mListIb.setActivated(true);
+    }
 
-
+    private void stopRecordToInit() {
+        mediaStopRecording();
+        animatorSet3.cancel();
+        mRecordMidTv.setVisibility(View.GONE);
+        mRecordOutTv.setVisibility(View.GONE);
+        mTimeTv.stop();
+        reInitRecordnoAnimation();
+        mListIb.setActivated(true);
     }
 
 
@@ -229,20 +242,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
         ObjectAnimator animation4 = ObjectAnimator.ofFloat(mTimeTv, "translationY", 1.0f);
         //此处的-57一直没搞清楚什么原因，原本应该是-35
 
-        AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.playTogether(animation1, animation2, animation3, animation4);
-        animatorSet.setDuration(Const.ANIMATION_LONG_1000).start();
-    }
-
-    /**
-     * 动画1：record大图从大变小，并转换位置,速度快的
-     */
-    private void recordAnimation1Quick() {
-        ObjectAnimator animation1 = ObjectAnimator.ofFloat(mRecordIv, "scaleY", 0.65384615f);
-        ObjectAnimator animation2 = ObjectAnimator.ofFloat(mRecordIv, "scaleX", 0.65384615f);
-        ObjectAnimator animation3 = ObjectAnimator.ofFloat(mRecordIv, "translationY", -57.0f);
-        ObjectAnimator animation4 = ObjectAnimator.ofFloat(mTimeTv, "translationY", 1.0f);
-        //此处的-57一直没搞清楚什么原因，原本应该是-35
         AnimatorSet animatorSet = new AnimatorSet();
         animatorSet.playTogether(animation1, animation2, animation3, animation4);
         animatorSet.setDuration(Const.ANIMATION_LONG_1000).start();
@@ -264,7 +263,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             animation1 = ObjectAnimator.ofFloat(mTimeTv, "scaleX", 0.0f, 1.0f);
             animation2 = ObjectAnimator.ofFloat(mTimeTv, "scaleY", 0.0f, 1.0f);
             animatorSet.playTogether(animation1, animation2, animation3, animation4);
-        }else {
+        } else {
             animatorSet.playTogether(animation3, animation4);
         }
         animatorSet.setDuration(Const.ANIMATION_LONG_1000).start();
@@ -292,14 +291,15 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private void recordAnimation3() {
         ObjectAnimator animator1 = ObjectAnimator.ofFloat(mRecordMidTv, "alpha", 0f, 1f);
         animator1.setRepeatCount(20);
-        animator1.setDuration(Const.ANIMATION_LONG_1000);
+        animator1.setDuration(Const.ANIMATION_LONG_2000);
         ObjectAnimator animator2 = ObjectAnimator.ofFloat(mRecordMidTv, "alpha", 0f, 1f);
         animator2.setRepeatCount(20);
-        animator2.setDuration(Const.ANIMATION_LONG_1000);
+        animator2.setDuration(Const.ANIMATION_LONG_2000);
         ObjectAnimator.ofFloat(mRecordOutTv, "alpha", 0f, 1f).setRepeatCount(10);
         AnimatorSet set = new AnimatorSet();
         set.playTogether(animator1, animator2);
         set.start();
+        animatorSet3 = set;
     }
 
     private void querySaveRecord() {
@@ -318,12 +318,13 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         if (requestCode == Const.REQUESTCODE_QUERY_SAVE) {
             if (resultCode == Const.RESULTCODE_OK) {
-                startActivity(new Intent(this, WearListActivity.class));
-                state = STATE_RECORDSTOPED;
+                startActivityForResult(new Intent(this, WearListActivity.class), Const
+                        .REQUESTCODE_LIST);
+                //state = STATE_RECORDSTOPED;
             } else if (resultCode == Const.RESULTCODE_CANCEL) {
                 try {
                     deleteFile();
-                    state = STATE_RECORDSTOPED;
+                    //state = STATE_RECORDSTOPED;
                     reInitRecord();
                 } catch (Exception e) {
                     Log.e(LOG_TAG, "cancel save Record failed " + e.getMessage());
@@ -332,18 +333,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         } else if (requestCode == Const.REQUESTCODE_QUERY_STOP_RECORD) {
             if (resultCode == Const.RESULTCODE_OK) {
-                stopRecord(new MyAnimatorListener() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        super.onAnimationEnd(animation);
-                        reInitRecord();
-                    }
-                });
-                state = STATE_RECORDSTOPED;
+                stopRecordToInit();
+                //state = STATE_RECORDSTOPED;
 
             } else if (resultCode == Const.RESULTCODE_CANCEL) {
 
             }
+        } else if (requestCode == Const.REQUESTCODE_LIST) {
+            reInitRecord();
         }
 
     }

@@ -7,6 +7,7 @@ public class Const {
     public static final int REQUESTCODE_QUERY_SAVE = 1001;
     public static final int REQUESTCODE_QUERY_STOP_RECORD = 1002;
     public static final int REQUESTCODE_QUERY_DELETE = 1003;
+    public static final int REQUESTCODE_LIST = 1004;
 
     public static final int RESULTCODE_OK = 2001;
     public static final int RESULTCODE_CANCEL = 2002;
