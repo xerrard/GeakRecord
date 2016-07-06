@@ -1,41 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<android.support.wearable.view.BoxInsetLayout
+<FrameLayout
+    android:id="@+id/frame_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <FrameLayout
-        android:id="@+id/frame_layout"
+    <!--app:layout_box="left|top|bottom|right"-->
+    <com.igeak.record.WearableListView
+        android:id="@+id/wearable_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <!--app:layout_box="left|top|bottom|right"-->
-        <android.support.wearable.view.WearableListView
-            android:id="@+id/wearable_list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-        </android.support.wearable.view.WearableListView>
+    </com.igeak.record.WearableListView>
 
-        <RelativeLayout
-            android:id="@+id/item_img_rl"
-            android:layout_width="match_parent"
-            android:layout_height="99px"
-        >
-
-            <ImageView
-                android:layout_width="59px"
-                android:layout_height="59px"
-                android:layout_centerInParent="true"
-                android:background="@drawable/smallrecord"
-            />
-        </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/item_img_rl"
+        android:layout_width="match_parent"
+        android:layout_height="99px"
+    >
 
         <ImageView
-            android:layout_gravity="center"
-            android:layout_width="match_parent"
-            android:layout_height="163px"
-            android:background="@drawable/rect"/>
+            android:layout_width="59px"
+            android:layout_height="59px"
+            android:layout_centerInParent="true"
+            android:background="@drawable/smallrecord"
+        />
+    </RelativeLayout>
 
-    </FrameLayout>
-</android.support.wearable.view.BoxInsetLayout>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="163px"
+        android:layout_gravity="center"
+        android:background="@drawable/rect"/>
+
+</FrameLayout>
+

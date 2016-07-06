@@ -32,7 +32,7 @@ import java.util.Iterator;
 import java.util.List;
 
 @TargetApi(20)
-public class WearableListView1 extends RecyclerView {
+public class WearableListView extends RecyclerView {
     private static final String TAG = "WearableListView";
     private static final long FLIP_ANIMATION_DURATION_MS = 150L;
     private static final long CENTERING_ANIMATION_DURATION_MS = 150L;
@@ -46,14 +46,14 @@ public class WearableListView1 extends RecyclerView {
     private boolean mGestureNavigationEnabled;
     private int mTapPositionX;
     private int mTapPositionY;
-    private WearableListView1.ClickListener mClickListener;
+    private WearableListView.ClickListener mClickListener;
     private Animator mScrollAnimator;
     private int mLastScrollChange;
-    private WearableListView1.SetScrollVerticallyProperty mSetScrollVerticallyProperty;
-    private final List<WearableListView1.OnScrollListener> mOnScrollListeners;
-    private final List<WearableListView1.OnCentralPositionChangedListener>
+    private WearableListView.SetScrollVerticallyProperty mSetScrollVerticallyProperty;
+    private final List<WearableListView.OnScrollListener> mOnScrollListeners;
+    private final List<WearableListView.OnCentralPositionChangedListener>
             mOnCentralPositionChangedListeners;
-    private WearableListView1.OnOverScrollListener mOverScrollListener;
+    private WearableListView.OnOverScrollListener mOverScrollListener;
     private boolean mGreedyTouchMode;
     private float mStartX;
     private float mStartY;
@@ -70,21 +70,21 @@ public class WearableListView1 extends RecyclerView {
     private final Runnable mPressedRunnable;
     private final Runnable mReleasedRunnable;
     private Runnable mNotifyChildrenPostLayoutRunnable;
-    private final WearableListView1.OnChangeObserver mObserver;
+    private final WearableListView.OnChangeObserver mObserver;
 
-    public WearableListView1(Context context) {
+    public WearableListView(Context context) {
         this(context, (AttributeSet) null);
     }
 
-    public WearableListView1(Context context, AttributeSet attrs) {
+    public WearableListView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public WearableListView1(Context context, AttributeSet attrs, int defStyleAttr) {
+    public WearableListView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         this.mCanClick = true;
         this.mGestureNavigationEnabled = true;
-        this.mSetScrollVerticallyProperty = new WearableListView1.SetScrollVerticallyProperty();
+        this.mSetScrollVerticallyProperty = new WearableListView.SetScrollVerticallyProperty();
         this.mOnScrollListeners = new ArrayList();
         this.mOnCentralPositionChangedListeners = new ArrayList();
         this.mInitialOffset = 0;
@@ -94,10 +94,10 @@ public class WearableListView1 extends RecyclerView {
         this.mPressedView = null;
         this.mPressedRunnable = new Runnable() {
             public void run() {
-                if (WearableListView1.this.getChildCount() > 0) {
-                    WearableListView1.this.mPressedView = WearableListView1.this.getChildAt
-                            (WearableListView1.this.findCenterViewIndex());
-                    WearableListView1.this.mPressedView.setPressed(true);
+                if (WearableListView.this.getChildCount() > 0) {
+                    WearableListView.this.mPressedView = WearableListView.this.getChildAt
+                            (WearableListView.this.findCenterViewIndex());
+                    WearableListView.this.mPressedView.setPressed(true);
                 } else {
                     Log.w("WearableListView", "mPressedRunnable: the children were removed, " +
                             "skipping.");
@@ -107,29 +107,29 @@ public class WearableListView1 extends RecyclerView {
         };
         this.mReleasedRunnable = new Runnable() {
             public void run() {
-                WearableListView1.this.releasePressedItem();
+                WearableListView.this.releasePressedItem();
             }
         };
         this.mNotifyChildrenPostLayoutRunnable = new Runnable() {
             public void run() {
-                WearableListView1.this.notifyChildrenAboutProximity(false);
+                WearableListView.this.notifyChildrenAboutProximity(false);
             }
         };
-        this.mObserver = new WearableListView1.OnChangeObserver();
+        this.mObserver = new WearableListView.OnChangeObserver();
         this.setHasFixedSize(true);
         this.setOverScrollMode(2);
-        this.setLayoutManager(new WearableListView1.LayoutManager());
+        this.setLayoutManager(new WearableListView.LayoutManager());
         android.support.v7.widget.RecyclerView.OnScrollListener onScrollListener = new android
                 .support.v7.widget.RecyclerView.OnScrollListener() {
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                if (newState == 0 && WearableListView1.this.getChildCount() > 0) {
-                    WearableListView1.this.handleTouchUp((MotionEvent) null, newState);
+                if (newState == 0 && WearableListView.this.getChildCount() > 0) {
+                    WearableListView.this.handleTouchUp((MotionEvent) null, newState);
                 }
 
-                Iterator var3 = WearableListView1.this.mOnScrollListeners.iterator();
+                Iterator var3 = WearableListView.this.mOnScrollListeners.iterator();
 
                 while (var3.hasNext()) {
-                    WearableListView1.OnScrollListener listener = (WearableListView1
+                    WearableListView.OnScrollListener listener = (WearableListView
                             .OnScrollListener) var3.next();
                     listener.onScrollStateChanged(newState);
                 }
@@ -137,7 +137,7 @@ public class WearableListView1 extends RecyclerView {
             }
 
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                WearableListView1.this.onScroll(dy);
+                WearableListView.this.onScroll(dy);
             }
         };
         this.setOnScrollListener(onScrollListener);
@@ -174,7 +174,7 @@ public class WearableListView1 extends RecyclerView {
     }
 
     public void resetLayoutManager() {
-        this.setLayoutManager(new WearableListView1.LayoutManager());
+        this.setLayoutManager(new WearableListView.LayoutManager());
     }
 
     public void setGreedyTouchMode(boolean greedy) {
@@ -278,7 +278,7 @@ public class WearableListView1 extends RecyclerView {
         Iterator var2 = this.mOnScrollListeners.iterator();
 
         while (var2.hasNext()) {
-            WearableListView1.OnScrollListener listener = (WearableListView1.OnScrollListener) var2
+            WearableListView.OnScrollListener listener = (WearableListView.OnScrollListener) var2
                     .next();
             listener.onScroll(dy);
         }
@@ -286,21 +286,21 @@ public class WearableListView1 extends RecyclerView {
         this.notifyChildrenAboutProximity(true);
     }
 
-    public void addOnScrollListener(WearableListView1.OnScrollListener listener) {
+    public void addOnScrollListener(WearableListView.OnScrollListener listener) {
         this.mOnScrollListeners.add(listener);
     }
 
-    public void removeOnScrollListener(WearableListView1.OnScrollListener listener) {
+    public void removeOnScrollListener(WearableListView.OnScrollListener listener) {
         this.mOnScrollListeners.remove(listener);
     }
 
-    public void addOnCentralPositionChangedListener(WearableListView1
+    public void addOnCentralPositionChangedListener(WearableListView
                                                             .OnCentralPositionChangedListener
                                                             listener) {
         this.mOnCentralPositionChangedListeners.add(listener);
     }
 
-    public void removeOnCentralPositionChangedListener(WearableListView1
+    public void removeOnCentralPositionChangedListener(WearableListView
                                                                .OnCentralPositionChangedListener
                                                                listener) {
         this.mOnCentralPositionChangedListeners.remove(listener);
@@ -337,7 +337,7 @@ public class WearableListView1 extends RecyclerView {
         if (this.isEnabled() && this.getVisibility() == 0 && this.getChildCount() >= 1) {
             int index = this.findCenterViewIndex();
             View view = this.getChildAt(index);
-            WearableListView1.ViewHolder holder = this.getChildViewHolder(view);
+            WearableListView.ViewHolder holder = this.getChildViewHolder(view);
             if (view.performClick()) {
                 return true;
             } else if (this.mClickListener != null) {
@@ -358,7 +358,7 @@ public class WearableListView1 extends RecyclerView {
             float rawY = event.getRawY();
             int index = this.findCenterViewIndex();
             View view = this.getChildAt(index);
-            WearableListView1.ViewHolder holder = this.getChildViewHolder(view);
+            WearableListView.ViewHolder holder = this.getChildViewHolder(view);
             this.computeTapRegions(this.mTapRegions);
             if (rawY > this.mTapRegions[0] && rawY < this.mTapRegions[1]) {
                 if (this.mClickListener != null) {
@@ -476,22 +476,22 @@ public class WearableListView1 extends RecyclerView {
 
     public void smoothScrollToPosition(int position, android.support.v7.widget.RecyclerView
             .SmoothScroller smoothScroller) {
-        WearableListView1.LayoutManager layoutManager = (WearableListView1.LayoutManager) this
+        WearableListView.LayoutManager layoutManager = (WearableListView.LayoutManager) this
                 .getLayoutManager();
         layoutManager.setCustomSmoothScroller(smoothScroller);
         this.smoothScrollToPosition(position);
         layoutManager.clearCustomSmoothScroller();
     }
 
-    public WearableListView1.ViewHolder getChildViewHolder(View child) {
-        return (WearableListView1.ViewHolder) super.getChildViewHolder(child);
+    public WearableListView.ViewHolder getChildViewHolder(View child) {
+        return (WearableListView.ViewHolder) super.getChildViewHolder(child);
     }
 
-    public void setClickListener(WearableListView1.ClickListener clickListener) {
+    public void setClickListener(WearableListView.ClickListener clickListener) {
         this.mClickListener = clickListener;
     }
 
-    public void setOverScrollListener(WearableListView1.OnOverScrollListener listener) {
+    public void setOverScrollListener(WearableListView.OnOverScrollListener listener) {
         this.mOverScrollListener = listener;
     }
 
@@ -566,7 +566,7 @@ public class WearableListView1 extends RecyclerView {
             this.startScrollAnimation(scrollToMiddle, 150L, 0L, new SimpleAnimatorListener() {
                 public void onAnimationEnd(Animator animator) {
                     if (!this.wasCanceled()) {
-                        WearableListView1.this.mCanClick = true;
+                        WearableListView.this.mCanClick = true;
                     }
 
                 }
@@ -595,7 +595,7 @@ public class WearableListView1 extends RecyclerView {
             this.computeTapRegions(this.mTapRegions);
             if (rawY > this.mTapRegions[0] && rawY < this.mTapRegions[1]) {
                 View view = this.getChildAt(this.findCenterViewIndex());
-                if (view instanceof WearableListView1.OnCenterProximityListener) {
+                if (view instanceof WearableListView.OnCenterProximityListener) {
                     Handler handler = this.getHandler();
                     if (handler != null) {
                         handler.removeCallbacks(this.mReleasedRunnable);
@@ -639,7 +639,7 @@ public class WearableListView1 extends RecyclerView {
     }
 
     private void notifyChildrenAboutProximity(boolean animate) {
-        WearableListView1.LayoutManager layoutManager = (WearableListView1.LayoutManager) this
+        WearableListView.LayoutManager layoutManager = (WearableListView.LayoutManager) this
                 .getLayoutManager();
         int count = layoutManager.getChildCount();
         if (count != 0) {
@@ -648,7 +648,7 @@ public class WearableListView1 extends RecyclerView {
             int position;
             for (position = 0; position < count; ++position) {
                 View view = layoutManager.getChildAt(position);
-                WearableListView1.ViewHolder listener = this.getChildViewHolder(view);
+                WearableListView.ViewHolder listener = this.getChildViewHolder(view);
                 listener.onCenterProximity(position == index, animate);
             }
 
@@ -657,7 +657,7 @@ public class WearableListView1 extends RecyclerView {
                 Iterator var8 = this.mOnScrollListeners.iterator();
 
                 while (var8.hasNext()) {
-                    WearableListView1.OnScrollListener var9 = (WearableListView1.OnScrollListener)
+                    WearableListView.OnScrollListener var9 = (WearableListView.OnScrollListener)
                             var8.next();
                     var9.onCentralPositionChanged(position);
                 }
@@ -665,7 +665,7 @@ public class WearableListView1 extends RecyclerView {
                 var8 = this.mOnCentralPositionChangedListeners.iterator();
 
                 while (var8.hasNext()) {
-                    WearableListView1.OnCentralPositionChangedListener var10 = (WearableListView1
+                    WearableListView.OnCentralPositionChangedListener var10 = (WearableListView
                             .OnCentralPositionChangedListener) var8.next();
                     var10.onCentralPositionChanged(position);
                 }
@@ -682,13 +682,13 @@ public class WearableListView1 extends RecyclerView {
     }
 
     protected void onDetachedFromWindow() {
-        this.mObserver.setListView((WearableListView1) null);
+        this.mObserver.setListView((WearableListView) null);
         super.onDetachedFromWindow();
     }
 
     private static class OnChangeObserver extends AdapterDataObserver implements
             OnLayoutChangeListener {
-        private WeakReference<WearableListView1> mListView;
+        private WeakReference<WearableListView> mListView;
         private android.support.v7.widget.RecyclerView.Adapter mAdapter;
         private boolean mIsObservingAdapter;
         private boolean mIsListeningToLayoutChange;
@@ -696,7 +696,7 @@ public class WearableListView1 extends RecyclerView {
         private OnChangeObserver() {
         }
 
-        public void setListView(WearableListView1 listView) {
+        public void setListView(WearableListView listView) {
             this.stopOnLayoutChangeListening();
             this.mListView = new WeakReference(listView);
         }
@@ -725,7 +725,7 @@ public class WearableListView1 extends RecyclerView {
         }
 
         private void startOnLayoutChangeListening() {
-            WearableListView1 listView = this.mListView == null ? null : (WearableListView1) this
+            WearableListView listView = this.mListView == null ? null : (WearableListView) this
                     .mListView.get();
             if (!this.mIsListeningToLayoutChange && listView != null) {
                 listView.addOnLayoutChangeListener(this);
@@ -736,7 +736,7 @@ public class WearableListView1 extends RecyclerView {
 
         private void stopOnLayoutChangeListening() {
             if (this.mIsListeningToLayoutChange) {
-                WearableListView1 listView = this.mListView == null ? null : (WearableListView1)
+                WearableListView listView = this.mListView == null ? null : (WearableListView)
                         this.mListView.get();
                 if (listView != null) {
                     listView.removeOnLayoutChangeListener(this);
@@ -753,7 +753,7 @@ public class WearableListView1 extends RecyclerView {
 
         public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int
                 i6, int i7) {
-            WearableListView1 listView = (WearableListView1) this.mListView.get();
+            WearableListView listView = (WearableListView) this.mListView.get();
             if (listView != null) {
                 this.stopOnLayoutChangeListening();
                 if (listView.getChildCount() > 0) {
@@ -764,16 +764,16 @@ public class WearableListView1 extends RecyclerView {
         }
     }
 
-    private class SetScrollVerticallyProperty extends Property<WearableListView1, Integer> {
+    private class SetScrollVerticallyProperty extends Property<WearableListView, Integer> {
         public SetScrollVerticallyProperty() {
             super(Integer.class, "scrollVertically");
         }
 
-        public Integer get(WearableListView1 wearableListView) {
+        public Integer get(WearableListView wearableListView) {
             return Integer.valueOf(wearableListView.mLastScrollChange);
         }
 
-        public void set(WearableListView1 wearableListView, Integer value) {
+        public void set(WearableListView wearableListView, Integer value) {
             wearableListView.setScrollVertically(value.intValue());
         }
     }
@@ -784,8 +784,8 @@ public class WearableListView1 extends RecyclerView {
         }
 
         protected void onCenterProximity(boolean isCentralItem, boolean animate) {
-            if (this.itemView instanceof WearableListView1.OnCenterProximityListener) {
-                WearableListView1.OnCenterProximityListener item = (WearableListView1
+            if (this.itemView instanceof WearableListView.OnCenterProximityListener) {
+                WearableListView.OnCenterProximityListener item = (WearableListView
                         .OnCenterProximityListener) this.itemView;
                 if (isCentralItem) {
                     item.onCenterPosition(animate);
@@ -799,9 +799,9 @@ public class WearableListView1 extends RecyclerView {
 
     private static class SmoothScroller extends LinearSmoothScroller {
         private static final float MILLISECONDS_PER_INCH = 100.0F;
-        private final WearableListView1.LayoutManager mLayoutManager;
+        private final WearableListView.LayoutManager mLayoutManager;
 
-        public SmoothScroller(Context context, WearableListView1.LayoutManager manager) {
+        public SmoothScroller(Context context, WearableListView.LayoutManager manager) {
             super(context);
             this.mLayoutManager = manager;
         }
@@ -826,7 +826,7 @@ public class WearableListView1 extends RecyclerView {
     }
 
     public abstract static class Adapter extends android.support.v7.widget.RecyclerView
-            .Adapter<WearableListView1.ViewHolder> {
+            .Adapter<WearableListView.ViewHolder> {
         public Adapter() {
         }
     }
@@ -854,7 +854,7 @@ public class WearableListView1 extends RecyclerView {
     }
 
     public interface ClickListener {
-        void onClick(WearableListView1.ViewHolder var1);
+        void onClick(WearableListView.ViewHolder var1);
 
         void onTopEmptyRegionClick();
     }
@@ -883,11 +883,11 @@ public class WearableListView1 extends RecyclerView {
             int count = this.getChildCount();
             int index = -1;
             int closest = 2147483647;
-            int centerY = WearableListView1.getCenterYPos(WearableListView1.this);
+            int centerY = WearableListView.getCenterYPos(WearableListView.this);
 
             for (int i = 0; i < count; ++i) {
-                View child = WearableListView1.this.getLayoutManager().getChildAt(i);
-                int childCenterY = WearableListView1.this.getTop() + WearableListView1
+                View child = WearableListView.this.getLayoutManager().getChildAt(i);
+                int childCenterY = WearableListView.this.getTop() + WearableListView
                         .getCenterYPos(child);
                 int distance = Math.abs(centerY - childCenterY);
                 if (distance < closest) {
@@ -905,7 +905,7 @@ public class WearableListView1 extends RecyclerView {
 
         public void onLayoutChildren(Recycler recycler, State state) {
             int parentBottom = this.getHeight() - this.getPaddingBottom();
-            int oldTop = WearableListView1.this.getCentralViewTop() + WearableListView1.this
+            int oldTop = WearableListView.this.getCentralViewTop() + WearableListView.this
                     .mInitialOffset;
             if (this.mUseOldViewTop && this.getChildCount() > 0) {
                 int child = this.findCenterViewIndex();
@@ -950,17 +950,17 @@ public class WearableListView1 extends RecyclerView {
 
                     while (oldTop > this.getPaddingTop() && position > 0) {
                         --position;
-                        oldTop -= WearableListView1.this.getItemHeight();
+                        oldTop -= WearableListView.this.getItemHeight();
                     }
 
-                    if (position == 0 && oldTop > WearableListView1.this.getCentralViewTop()) {
-                        oldTop = WearableListView1.this.getCentralViewTop();
+                    if (position == 0 && oldTop > WearableListView.this.getCentralViewTop()) {
+                        oldTop = WearableListView.this.getCentralViewTop();
                     }
 
                     this.mFirstPosition = position;
                 }
             } else if (this.mPushFirstHigher) {
-                oldTop = WearableListView1.this.getCentralViewTop() - WearableListView1.this
+                oldTop = WearableListView.this.getCentralViewTop() - WearableListView.this
                         .getItemHeight();
             }
 
@@ -969,8 +969,8 @@ public class WearableListView1 extends RecyclerView {
                 this.setAbsoluteScroll(0);
             } else {
                 View var10 = this.getChildAt(this.findCenterViewIndex());
-                this.setAbsoluteScroll(var10.getTop() - WearableListView1.this.getCentralViewTop()
-                        + this.getPosition(var10) * WearableListView1.this.getItemHeight());
+                this.setAbsoluteScroll(var10.getTop() - WearableListView.this.getCentralViewTop()
+                        + this.getPosition(var10) * WearableListView.this.getItemHeight());
             }
 
             this.mUseOldViewTop = true;
@@ -980,7 +980,7 @@ public class WearableListView1 extends RecyclerView {
         private void performLayoutChildren(Recycler recycler, State state, int parentBottom, int
                 top) {
             this.detachAndScrapAttachedViews(recycler);
-            if (WearableListView1.this.mMaximizeSingleItem && state.getItemCount() == 1) {
+            if (WearableListView.this.mMaximizeSingleItem && state.getItemCount() == 1) {
                 this.performLayoutOneChild(recycler, parentBottom);
                 this.mWasZoomedIn = true;
             } else {
@@ -989,7 +989,7 @@ public class WearableListView1 extends RecyclerView {
             }
 
             if (this.getChildCount() > 0) {
-                WearableListView1.this.post(WearableListView1.this.mNotifyChildrenPostLayoutRunnable);
+                WearableListView.this.post(WearableListView.this.mNotifyChildrenPostLayoutRunnable);
             }
 
         }
@@ -1014,7 +1014,7 @@ public class WearableListView1 extends RecyclerView {
                 View v = recycler.getViewForPosition(this.getFirstPosition() + i);
                 this.addView(v, i);
                 this.measureThirdView(v);
-                bottom = top + WearableListView1.this.getItemHeight();
+                bottom = top + WearableListView.this.getItemHeight();
                 v.layout(left, top, right, bottom);
                 ++i;
             }
@@ -1023,10 +1023,10 @@ public class WearableListView1 extends RecyclerView {
 
         private void setAbsoluteScroll(int absoluteScroll) {
             this.mAbsoluteScroll = absoluteScroll;
-            Iterator var2 = WearableListView1.this.mOnScrollListeners.iterator();
+            Iterator var2 = WearableListView.this.mOnScrollListeners.iterator();
 
             while (var2.hasNext()) {
-                WearableListView1.OnScrollListener listener = (WearableListView1.OnScrollListener)
+                WearableListView.OnScrollListener listener = (WearableListView.OnScrollListener)
                         var2.next();
                 listener.onAbsoluteScrollChange(this.mAbsoluteScroll);
             }
@@ -1075,8 +1075,8 @@ public class WearableListView1 extends RecyclerView {
                         int bottomView1;
                         if (this.getFirstPosition() <= 0) {
                             this.mPushFirstHigher = false;
-                            bottomView1 = WearableListView1.this.mOverScrollListener != null ?
-                                    this.getHeight() : WearableListView1.this.getTopViewMaxTop();
+                            bottomView1 = WearableListView.this.mOverScrollListener != null ?
+                                    this.getHeight() : WearableListView.this.getTopViewMaxTop();
                             scrollBy = Math.min(-dy + scrolled, bottomView1 - parentHeight1
                                     .getTop());
                             scrolled -= scrollBy;
@@ -1097,7 +1097,7 @@ public class WearableListView1 extends RecyclerView {
                         this.addView(scrollBy2, 0);
                         this.measureThirdView(scrollBy2);
                         int v1 = parentHeight1.getTop();
-                        top = v1 - WearableListView1.this.getItemHeight();
+                        top = v1 - WearableListView.this.getItemHeight();
                         scrollBy2.layout(left, top, right, v1);
                     }
                 } else if (dy > 0) {
@@ -1126,7 +1126,7 @@ public class WearableListView1 extends RecyclerView {
                         top = this.getChildAt(this.getChildCount() - 1).getBottom();
                         this.addView(v);
                         this.measureThirdView(v);
-                        int bottom = top + WearableListView1.this.getItemHeight();
+                        int bottom = top + WearableListView.this.getItemHeight();
                         v.layout(left, top, right, bottom);
                     }
                 }
@@ -1162,7 +1162,7 @@ public class WearableListView1 extends RecyclerView {
         public android.support.v7.widget.RecyclerView.SmoothScroller getDefaultSmoothScroller
                 (RecyclerView recyclerView) {
             if (this.mDefaultSmoothScroller == null) {
-                this.mDefaultSmoothScroller = new WearableListView1.SmoothScroller(recyclerView
+                this.mDefaultSmoothScroller = new WearableListView.SmoothScroller(recyclerView
                         .getContext(), this);
             }
 

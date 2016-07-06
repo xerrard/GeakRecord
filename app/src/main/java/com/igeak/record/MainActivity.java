@@ -75,7 +75,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         mBackIb.setOnClickListener(MainActivity.this);
         mSetupIb.setOnClickListener(MainActivity.this);
         mListIb.setOnClickListener(MainActivity.this);
-        mListIb.setActivated(true);
+        //mListIb.setActivated(false);
         initRecord();
 
     }
@@ -160,7 +160,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
      * 进入录音状态，开启闪烁动画
      */
     private void record() {
-        mListIb.setActivated(false);
+        mListIb.setActivated(true);
         mRecordMidTv.setVisibility(View.VISIBLE);
         mRecordOutTv.setVisibility(View.VISIBLE);
         recordAnimation3();
@@ -217,7 +217,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         mControlRl.setVisibility(View.GONE);
         mTimeTv.stop();
         mediaStopRecording();
-        mListIb.setActivated(true);
+        mListIb.setActivated(false);
     }
 
     private void stopRecordToInit() {
@@ -227,7 +227,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         mRecordOutTv.setVisibility(View.GONE);
         mTimeTv.stop();
         reInitRecordnoAnimation();
-        mListIb.setActivated(true);
+        mListIb.setActivated(false);
     }
 
 

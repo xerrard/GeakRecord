@@ -151,6 +151,7 @@ public class PlayerActivity extends Activity implements View.OnClickListener, Me
                 try {
                     pauseMusic(); //先暂停播放
                     delete();
+                    setResult(Const.RESULTCODE_UPDATE);
                 } catch (Exception e) {
                     Log.e(MainActivity.LOG_TAG, "delete Record failed " + e.getMessage());
                 }

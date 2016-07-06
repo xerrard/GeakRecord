@@ -6,15 +6,19 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.wearable.view.WearableListView;
+
+import com.igeak.record.WearableListView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -30,19 +34,27 @@ public class WearListActivity extends Activity
     //String[] elements = { "List Item 1", "List Item 2" };
     File[] files;
     private RelativeLayout mImgRecordRl;
+    WearableListView listView;
+    MyListAdapter myListAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         files = getAllRecordFileNames();
+        if (files.length == 0) {
+            Toast.makeText(getApplicationContext(), getString(R.string.toast_file_not_exist),
+                    Toast.LENGTH_LONG).show();
+            finish();
+        }
         setContentView(R.layout.my_list_activity);
         mImgRecordRl = (RelativeLayout) findViewById(R.id.item_img_rl);
         // Get the list component from the layout of the activity
-        WearableListView listView =
+        listView =
                 (WearableListView) findViewById(R.id.wearable_list);
-
+        myListAdapter = new MyListAdapter(this, files);
         // Assign an adapter to the list
-        listView.setAdapter(new MyListAdapter(this, files));
+        listView.setAdapter(myListAdapter);
 
         // Set a click listener
         listView.setClickListener(this);
@@ -90,16 +102,29 @@ public class WearListActivity extends Activity
 
     @Override
     public void onTopEmptyRegionClick() {
-
+        files = getAllRecordFileNames();
     }
 
     private void playMusic(int currentIndex) {
         Intent intent = new Intent(this, PlayerActivity.class);
         intent.putExtra("index", currentIndex);
-        startActivity(intent);
+        startActivityForResult(intent, Const.REQUESTCODE_PLAYER);
     }
 
-
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if ((Const.REQUESTCODE_PLAYER == requestCode) && (Const.RESULTCODE_UPDATE == resultCode)) {
+            files = getAllRecordFileNames();
+            if (files.length == 0) {
+//                Toast.makeText(getApplicationContext(), getString(R.string.toast_file_not_exist),
+//                        Toast.LENGTH_LONG).show();
+                finish();
+            }
+            myListAdapter.setFiles(files);
+            myListAdapter.notifyDataSetChanged();
+        }
+    }
 
     private static final class MyListAdapter extends WearableListView.Adapter {
         private File[] files;
@@ -113,6 +138,11 @@ public class WearListActivity extends Activity
             mInflater = LayoutInflater.from(context);
             this.files = files;
         }
+
+        public void setFiles(File[] files){
+            this.files = files;
+        }
+
 
         // Provide a reference to the type of views you're using
         public static final class ItemViewHolder extends WearableListView.ViewHolder {
@@ -157,7 +187,7 @@ public class WearListActivity extends Activity
         // (invoked by the WearableListView's layout manager)
         @Override
         public WearableListView.ViewHolder onCreateViewHolder(ViewGroup parent,
-                                                               int viewType) {
+                                                              int viewType) {
             // Inflate our custom layout for list items
             return new ItemViewHolder(mInflater.inflate(R.layout.list_item, null));
         }

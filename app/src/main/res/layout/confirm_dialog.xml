@@ -39,7 +39,6 @@
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="57px"
             android:includeFontPadding="false"
-            android:text="New Text"
             android:textColor="#FFF"
             android:textSize="30px"/>
     </RelativeLayout>

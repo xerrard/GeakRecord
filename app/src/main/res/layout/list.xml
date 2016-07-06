@@ -22,7 +22,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
-            android:text="上午开会"
             android:textSize="18px"
             android:visibility="gone"
         />
@@ -49,7 +48,6 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="档案 02"
                 android:textColor="#FFF"
                 android:textSize="28px"/>
             <LinearLayout
@@ -65,7 +63,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:text="2016/06/16"
                     android:textColor="#F77D27"
                     android:textSize="24px"
                 />
@@ -75,7 +72,6 @@
                     android:layout_height="match_parent"
                     android:layout_marginLeft="21px"
                     android:gravity="center"
-                    android:text="AM 11:42"
                     android:textColor="#F77D27"
                     android:textSize="24px"/>
 
@@ -101,7 +97,6 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginLeft="16px"
-                    android:text="00:10"
                     android:textSize="24px"/>
             </LinearLayout>
         </LinearLayout>
@@ -117,7 +112,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
-            android:text="中午开会"
             android:textSize="18px"/>
     </FrameLayout>
 
