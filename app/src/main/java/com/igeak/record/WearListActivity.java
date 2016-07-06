@@ -155,6 +155,7 @@ public class WearListActivity extends Activity
             private TextView mDateTv;
             private TextView mTimeTv;
             private TextView mDuationTv;
+            private ImageView mDuationImg;
 
             private RelativeLayout mInfoupRl;
             private TextView mSmallNameupTv;
@@ -173,6 +174,7 @@ public class WearListActivity extends Activity
                 mNameTv = (TextView) itemView.findViewById(R.id.record_name);
                 mDateTv = (TextView) itemView.findViewById(R.id.record_date);
                 mTimeTv = (TextView) itemView.findViewById(R.id.record_time);
+                mDuationImg = (ImageView) itemView.findViewById(R.id.record_duration_img);
                 mDuationTv = (TextView) itemView.findViewById(R.id.record_duration);
 
                 mInfoupRl = (RelativeLayout) itemView.findViewById(R.id.item_info_rl_up);
