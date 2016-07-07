@@ -9,6 +9,7 @@ import android.os.Bundle;
 
 import com.igeak.record.WearableListView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,13 +30,14 @@ import java.util.Date;
  */
 
 public class WearListActivity extends Activity
-        implements WearableListView.ClickListener {
+        implements WearableListView.ClickListener, View.OnLayoutChangeListener {
 
     //String[] elements = { "List Item 1", "List Item 2" };
     File[] files;
     private RelativeLayout mImgRecordRl;
     WearableListView listView;
     MyListAdapter myListAdapter;
+    private int mInitialHeaderHeight;
 
 
     @Override
@@ -67,18 +69,66 @@ public class WearListActivity extends Activity
                 /**
                  * 当选中第一个的时候，显示record图标
                  */
-                if (centerPosition > 0) {
-                    mImgRecordRl.setVisibility(View.GONE);
-                } else {
-                    mImgRecordRl.setVisibility(View.VISIBLE);
-                }
+//                if (centerPosition > 0) {
+//                    mImgRecordRl.setVisibility(View.GONE);
+//                } else {
+//                    mImgRecordRl.setVisibility(View.VISIBLE);
+//                }
 
             }
         });
+        listView.addOnScrollListener(new WearableListView.OnScrollListener() {
+            @Override
+            public void onScroll(int var1) {
+                adjustHeaderTranslation();
+            }
+
+            @Override
+            public void onAbsoluteScrollChange(int var1) {
+
+            }
+
+            @Override
+            public void onScrollStateChanged(int var1) {
+
+            }
+
+            @Override
+            public void onCentralPositionChanged(int var1) {
+
+            }
+        });
+        mImgRecordRl.addOnLayoutChangeListener(this);
+        listView.addOnLayoutChangeListener(this);
 
 
     }
 
+    @Override
+    public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int
+            oldTop, int oldRight, int oldBottom) {
+        if (v == mImgRecordRl) {
+            mInitialHeaderHeight = bottom - top;
+            mInitialHeaderHeight += ((ViewGroup.MarginLayoutParams) v.getLayoutParams()).topMargin;
+
+        } else if (v == listView) {
+            adjustHeaderTranslation();
+        }
+    }
+
+
+    private void adjustHeaderTranslation() {
+        int translation = 0;
+        if (listView.getChildCount() > 0) {
+            translation = listView.getCentralViewTop() - listView.getChildAt(0).getTop();
+        }
+        float newTranslation = Math.min(Math.max(-mInitialHeaderHeight, -translation), 0);
+        int position = listView.getChildPosition(this.listView.getChildAt(0));
+        if (position != 0 && newTranslation >= 0) {
+            return;
+        }
+        mImgRecordRl.setTranslationY(newTranslation);
+    }
 
     private File[] getAllRecordFileNames() {
         File mfile = new File(MainActivity.FILE_PATH);
@@ -126,6 +176,7 @@ public class WearListActivity extends Activity
         }
     }
 
+
     private static final class MyListAdapter extends WearableListView.Adapter {
         private File[] files;
         private final Context mContext;
@@ -139,7 +190,7 @@ public class WearListActivity extends Activity
             this.files = files;
         }
 
-        public void setFiles(File[] files){
+        public void setFiles(File[] files) {
             this.files = files;
         }
 
@@ -243,6 +294,7 @@ public class WearListActivity extends Activity
                     itemHolder.mDuationTv.setText(duration);
 
                     itemHolder.mImgRl.setVisibility(View.GONE);
+
 
                 } catch (Exception e) {
                     e.printStackTrace();

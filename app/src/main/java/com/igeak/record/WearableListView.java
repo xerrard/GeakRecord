@@ -71,6 +71,8 @@ public class WearableListView extends RecyclerView {
     private final Runnable mReleasedRunnable;
     private Runnable mNotifyChildrenPostLayoutRunnable;
     private final WearableListView.OnChangeObserver mObserver;
+    private boolean isScroll = false;
+
 
     public WearableListView(Context context) {
         this(context, (AttributeSet) null);
@@ -112,7 +114,7 @@ public class WearableListView extends RecyclerView {
         };
         this.mNotifyChildrenPostLayoutRunnable = new Runnable() {
             public void run() {
-                WearableListView.this.notifyChildrenAboutProximity(false);
+                WearableListView.this.notifyChildrenAboutProximity(false,0);
             }
         };
         this.mObserver = new WearableListView.OnChangeObserver();
@@ -122,6 +124,13 @@ public class WearableListView extends RecyclerView {
         android.support.v7.widget.RecyclerView.OnScrollListener onScrollListener = new android
                 .support.v7.widget.RecyclerView.OnScrollListener() {
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                if (newState == SCROLL_STATE_IDLE) {
+                    //WearableListView.this.onScrollStop();
+                }
+
+                if(newState == SCROLL_STATE_DRAGGING){
+                    //WearableListView.this.onScrollStart();
+                }
                 if (newState == 0 && WearableListView.this.getChildCount() > 0) {
                     WearableListView.this.handleTouchUp((MotionEvent) null, newState);
                 }
@@ -134,9 +143,11 @@ public class WearableListView extends RecyclerView {
                     listener.onScrollStateChanged(newState);
                 }
 
+
             }
 
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                Log.i("xerrard", "RecyclerView onScrolled" + "  dy = " + dy);
                 WearableListView.this.onScroll(dy);
             }
         };
@@ -228,6 +239,7 @@ public class WearableListView extends RecyclerView {
         }
     }
 
+
     public boolean onTouchEvent(MotionEvent event) {
         if (!this.isEnabled()) {
             return false;
@@ -237,8 +249,10 @@ public class WearableListView extends RecyclerView {
             if (this.getChildCount() > 0) {
                 int action = event.getActionMasked();
                 if (action == 0) {
+                    WearableListView.this.onTouchDown();
                     this.handleTouchDown(event);
                 } else if (action == 1) {
+                    WearableListView.this.onTouchUp();
                     this.handleTouchUp(event, scrollState);
                     this.getParent().requestDisallowInterceptTouchEvent(false);
                 } else if (action == 2) {
@@ -275,6 +289,8 @@ public class WearableListView extends RecyclerView {
     }
 
     private void onScroll(int dy) {
+        //Log.i("xerrard","view onScroll");
+        isScroll = true;
         Iterator var2 = this.mOnScrollListeners.iterator();
 
         while (var2.hasNext()) {
@@ -282,9 +298,62 @@ public class WearableListView extends RecyclerView {
                     .next();
             listener.onScroll(dy);
         }
+        this.notifyChildrenAboutProximity(true,dy);
 
-        this.notifyChildrenAboutProximity(true);
+
+
     }
+
+    private void onTouchDown(){
+        this.onAllItemTouch(true);
+    }
+
+    private void onTouchUp() {
+
+        this.onAllItemTouch(false);
+
+    }
+
+    private void onScrollStart() {
+        //Log.i("xerrard","view onScrollStart");
+        this.onAllItemScroll(true);
+    }
+
+
+    private void onScrollStop() {
+        //Log.i("xerrard","view onScrollStoped");
+        this.onAllItemScroll(false);
+
+    }
+
+    private void onAllItemScroll(boolean isScroll) {
+        WearableListView.LayoutManager layoutManager = (WearableListView.LayoutManager) this
+                .getLayoutManager();
+        int count = layoutManager.getChildCount();
+        if (count != 0) {
+            for (int position = 0; position < count; ++position) {
+                View view = layoutManager.getChildAt(position);
+                WearableListView.ViewHolder listener = this.getChildViewHolder(view);
+                listener.onItemScroll(isScroll);
+            }
+        }
+    }
+
+
+    private void onAllItemTouch(boolean isDown) {
+        WearableListView.LayoutManager layoutManager = (WearableListView.LayoutManager) this
+                .getLayoutManager();
+        int count = layoutManager.getChildCount();
+        if (count != 0) {
+            for (int position = 0; position < count; ++position) {
+                View view = layoutManager.getChildAt(position);
+                WearableListView.ViewHolder listener = this.getChildViewHolder(view);
+                listener.onItemTouch(isDown);
+            }
+        }
+    }
+
+
 
     public void addOnScrollListener(WearableListView.OnScrollListener listener) {
         this.mOnScrollListeners.add(listener);
@@ -638,7 +707,9 @@ public class WearableListView extends RecyclerView {
         this.mMaximizeSingleItem = maximizeSingleItem;
     }
 
-    private void notifyChildrenAboutProximity(boolean animate) {
+    private void notifyChildrenAboutProximity(boolean animate,int dy) {
+        //onAllItemScroll(animate);
+
         WearableListView.LayoutManager layoutManager = (WearableListView.LayoutManager) this
                 .getLayoutManager();
         int count = layoutManager.getChildCount();
@@ -649,7 +720,8 @@ public class WearableListView extends RecyclerView {
             for (position = 0; position < count; ++position) {
                 View view = layoutManager.getChildAt(position);
                 WearableListView.ViewHolder listener = this.getChildViewHolder(view);
-                listener.onCenterProximity(position == index, animate);
+                listener.onCenterProximity(position == index, animate,dy);
+
             }
 
             position = this.getChildViewHolder(this.getChildAt(index)).getPosition();
@@ -783,19 +855,42 @@ public class WearableListView extends RecyclerView {
             super(itemView);
         }
 
-        protected void onCenterProximity(boolean isCentralItem, boolean animate) {
+        protected void onCenterProximity(boolean isCentralItem, boolean animate,int dy) {
             if (this.itemView instanceof WearableListView.OnCenterProximityListener) {
                 WearableListView.OnCenterProximityListener item = (WearableListView
                         .OnCenterProximityListener) this.itemView;
                 if (isCentralItem) {
-                    item.onCenterPosition(animate);
+                    item.onCenterPosition(animate,dy);
                 } else {
-                    item.onNonCenterPosition(animate);
+                    item.onNonCenterPosition(animate,dy);
                 }
 
             }
         }
+
+        protected void onItemScroll(boolean isScroll) {
+            WearableListView.onItemScroll item = (WearableListView
+                    .onItemScroll) this.itemView;
+            if (isScroll) {
+                item.onScrollStart();
+            } else {
+                item.onScrollStoped();
+            }
+        }
+
+        protected void onItemTouch(boolean isDown) {
+            WearableListView.onItemTouch item = (WearableListView
+                    .onItemTouch) this.itemView;
+            if (isDown) {
+                item.onTouchDown();
+            } else {
+                item.onTouchUp();
+            }
+        }
+
     }
+
+
 
     private static class SmoothScroller extends LinearSmoothScroller {
         private static final float MILLISECONDS_PER_INCH = 100.0F;
@@ -860,9 +955,21 @@ public class WearableListView extends RecyclerView {
     }
 
     public interface OnCenterProximityListener {
-        void onCenterPosition(boolean var1);
+        void onCenterPosition(boolean var1,int dy);
 
-        void onNonCenterPosition(boolean var1);
+        void onNonCenterPosition(boolean var1,int dy);
+    }
+
+    public interface onItemScroll {
+        void onScrollStart();
+
+        void onScrollStoped();
+    }
+
+    public interface onItemTouch {
+        void onTouchDown();
+
+        void onTouchUp();
     }
 
     private class LayoutManager extends android.support.v7.widget.RecyclerView.LayoutManager {

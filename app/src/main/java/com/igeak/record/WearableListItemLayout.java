@@ -1,12 +1,8 @@
 package com.igeak.record;
 
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
 import android.content.Context;
-
-import com.igeak.record.WearableListView;
-
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -17,7 +13,7 @@ import android.widget.TextView;
  * Created by xuqiang on 16-7-1.
  */
 public class WearableListItemLayout extends FrameLayout
-        implements WearableListView.OnCenterProximityListener {
+        implements WearableListView.OnCenterProximityListener, WearableListView.onItemTouch {
 
 
     private RelativeLayout mDetailRl;
@@ -32,6 +28,7 @@ public class WearableListItemLayout extends FrameLayout
     private TextView mDuationTv;
     private ImageView mDuationImg;
 
+    private boolean isScroll = false;
 
     public WearableListItemLayout(Context context) {
         this(context, null);
@@ -72,34 +69,39 @@ public class WearableListItemLayout extends FrameLayout
 
 
     @Override
-    public void onCenterPosition(boolean animate) {
+    public void onCenterPosition(boolean animate,int dy) {
+        //Log.i("xerrard", "onCenterPosition animate = " + animate + "  dy = " + dy);
         //mDetailRl.setVisibility(VISIBLE);
         //mInfoRl.setVisibility(GONE);
 
 
-        mDateTimeLl.setVisibility(VISIBLE);
-        mDuarionLl.setVisibility(VISIBLE);
+        if (!isScroll) {
+            mDateTimeLl.setVisibility(VISIBLE);
+            mDuarionLl.setVisibility(VISIBLE);
+        }
+//        ObjectAnimator animation1 = ObjectAnimator.ofFloat(mNameTv, "scaleY", 1.0f);
+//        ObjectAnimator animation2 = ObjectAnimator.ofFloat(mNameTv, "scaleX", 1.0f);
+//        ObjectAnimator animation3 = ObjectAnimator.ofFloat(mNameTv, "translationY", -40.0f);
+//        //此处的-57一直没搞清楚什么原因，原本应该是-35
+//
+//        AnimatorSet animatorSet = new AnimatorSet();
+//        animatorSet.playTogether(animation1, animation2, animation3);
+//        animatorSet.setDuration(300).start();
 
-        ObjectAnimator animation1 = ObjectAnimator.ofFloat(mNameTv, "scaleY", 1.0f);
-        ObjectAnimator animation2 = ObjectAnimator.ofFloat(mNameTv, "scaleX", 1.0f);
-        ObjectAnimator animation3 = ObjectAnimator.ofFloat(mNameTv, "translationY", 0.0f);
-        //此处的-57一直没搞清楚什么原因，原本应该是-35
-
-        AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.playTogether(animation1, animation2, animation3);
-        animatorSet.setDuration(300).start();
-
-//        mNameTv.setScaleX(1.0f);
-//        mNameTv.setScaleY(1.0f);
-//        mNameTv.setTranslationY(0.0f);
+        mNameTv.setScaleX(1.0f);
+        mNameTv.setScaleY(1.0f);
+        mNameTv.setTranslationY(-40.0f);
     }
 
     @Override
-    public void onNonCenterPosition(boolean animate) {
+    public void onNonCenterPosition(boolean animate,int dy) {
+        //Log.i("xerrard", "onNonCenterPosition animate = " + animate + "  dy = " + dy);
         //mDetailRl.setVisibility(GONE);
         //mInfoRl.setVisibility(VISIBLE);
+        //if (!isScroll) {
         mDateTimeLl.setVisibility(GONE);
         mDuarionLl.setVisibility(GONE);
+        //}
 //        ObjectAnimator animation1 = ObjectAnimator.ofFloat(mNameTv, "scaleY", 0.5f);
 //        ObjectAnimator animation2 = ObjectAnimator.ofFloat(mNameTv, "scaleX", 0.5f);
 //        ObjectAnimator animation3 = ObjectAnimator.ofFloat(mNameTv, "translationY", 40.0f);
@@ -111,6 +113,20 @@ public class WearableListItemLayout extends FrameLayout
 
         mNameTv.setScaleX(0.5f);
         mNameTv.setScaleY(0.5f);
-        mNameTv.setTranslationY(40.0f);
+        mNameTv.setTranslationY(0.0f);
+    }
+
+    @Override
+    public void onTouchDown() {
+        //Log.i("xerrard", "onTouchDown");
+        isScroll = true;
+        mDateTimeLl.setVisibility(GONE);
+        mDuarionLl.setVisibility(GONE);
+    }
+
+    @Override
+    public void onTouchUp() {
+        //Log.i("xerrard", "onTouchUp");
+        isScroll = false;
     }
 }
