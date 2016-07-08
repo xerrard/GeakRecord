@@ -17,7 +17,8 @@
     <string name="toast_play_start_failed">Start play failed！</string>
     <string name="toast_play_stop_failed">Stop play failed！</string>
     <string name="toast_play_error">Play error！</string>
-
+    <string name="toast_memory_not_enough">Storage is insufficient!</string>
+    <string name="toast_record_over_6hours">The record is over 6 hours.</string>
     <string name="no_record_file">No Record!</string>
 
     <string name="toast_play_bt_headset">Please connect bluetooth headset！</string>

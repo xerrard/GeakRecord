@@ -18,9 +18,9 @@
     <string name="toast_play_start_failed">播放失败！</string>
     <string name="toast_play_stop_failed">停止失败！</string>
     <string name="toast_play_error">播放错误！</string>
-
+    <string name="toast_memory_not_enough">存储空间不足</string>
     <string name="no_record_file">您还没有录音！</string>
-
+    <string name="toast_record_over_6hours">录音时间超过6小时，已停止</string>
     <string name="toast_play_bt_headset">请连接蓝牙耳机！</string>
     <string name="record">录音</string>
 </resources>

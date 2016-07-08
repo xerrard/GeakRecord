@@ -30,10 +30,10 @@ public class WearableListItemLayout extends FrameLayout
     private boolean inTouchIng = false;
 
 
-
     AnimatorSet animatorSetCenter = null;
     AnimatorSet animatorSetCenterInfo = null;
     AnimatorSet animatorSetNoCenter = null;
+    AnimatorSet animatorSetNoCenterInfo = null;
 
     public WearableListItemLayout(Context context) {
         this(context, null);
@@ -67,32 +67,61 @@ public class WearableListItemLayout extends FrameLayout
         mDuationImg = (ImageView) findViewById(R.id.record_duration_img);
         mDuationTv = (TextView) findViewById(R.id.record_duration);
         mDuarionLl = (LinearLayout) findViewById(R.id.record_duration_ll);
+
+        initAnimation();
+
+
+    }
+
+    private void initAnimation() {
+        /**
+         * 进入中心的动画
+         */
+        ObjectAnimator animation1 = ObjectAnimator.ofFloat(mNameTv, "scaleY", 1.55f);
+        ObjectAnimator animation2 = ObjectAnimator.ofFloat(mNameTv, "scaleX", 1.55f);
+        ObjectAnimator animation3 = ObjectAnimator.ofFloat(mNameTv, "translationY", -40.0f);
+        animatorSetCenter = new AnimatorSet();
+        animatorSetCenter.playTogether(animation1, animation2, animation3);
+        animatorSetCenter.setDuration(300);
+
+        animatorSetCenterInfo = new AnimatorSet();
+        ObjectAnimator animation11 = ObjectAnimator.ofFloat(mDateTimeLl, "scaleY", 1.0f);
+        ObjectAnimator animation21 = ObjectAnimator.ofFloat(mDateTimeLl, "scaleX", 1.0f);
+        ObjectAnimator animation31 = ObjectAnimator.ofFloat(mDuarionLl, "scaleY", 1.0f);
+        ObjectAnimator animation41 = ObjectAnimator.ofFloat(mDuarionLl, "scaleX", 1.0f);
+        animatorSetCenterInfo.playTogether(animation11, animation21, animation31,
+                animation41);
+        animatorSetCenterInfo.setDuration(300);
+
+
+        /**
+         *从中心到边缘的动画
+         */
+        animatorSetNoCenter = new AnimatorSet();
+        ObjectAnimator animationb1 = ObjectAnimator.ofFloat(mNameTv, "scaleY", 1.0f);
+        ObjectAnimator animationb2 = ObjectAnimator.ofFloat(mNameTv, "scaleX", 1.0f);
+        ObjectAnimator animationb3 = ObjectAnimator.ofFloat(mNameTv, "translationY", 0.0f);
+        animatorSetNoCenter.playTogether(animationb1, animationb2, animationb3);
+        animatorSetNoCenter.setDuration(300);
+
+        animatorSetNoCenterInfo = new AnimatorSet();
+        ObjectAnimator animationb11 = ObjectAnimator.ofFloat(mDateTimeLl, "scaleY", 0.0f);
+        ObjectAnimator animationb21 = ObjectAnimator.ofFloat(mDateTimeLl, "scaleX", 0.0f);
+        ObjectAnimator animationb31 = ObjectAnimator.ofFloat(mDuarionLl, "scaleY", 0.0f);
+        ObjectAnimator animationb41 = ObjectAnimator.ofFloat(mDuarionLl, "scaleX", 0.0f);
+        animatorSetNoCenterInfo.playTogether(animationb11, animationb21, animationb31,
+                animationb41);
+        animatorSetNoCenterInfo.setDuration(300);
+
     }
 
 
     @Override
     public void onCenterPosition(boolean animate, int dy) {
-
-
         if (animate) {
             if (!inTouchIng) {
-                ObjectAnimator animation1 = ObjectAnimator.ofFloat(mNameTv, "scaleY", 1.55f);
-                ObjectAnimator animation2 = ObjectAnimator.ofFloat(mNameTv, "scaleX", 1.55f);
-                ObjectAnimator animation3 = ObjectAnimator.ofFloat(mNameTv, "translationY", -40.0f);
-                //此处的-57一直没搞清楚什么原因，原本应该是-35
-
-                animatorSetCenter = new AnimatorSet();
-                animatorSetCenter.playTogether(animation1, animation2, animation3);
-                animatorSetCenter.setDuration(300).start();
-
-                animatorSetCenterInfo = new AnimatorSet();
-                ObjectAnimator animation11 = ObjectAnimator.ofFloat(mDateTimeLl, "scaleY", 1.0f);
-                ObjectAnimator animation21 = ObjectAnimator.ofFloat(mDateTimeLl, "scaleX", 1.0f);
-                ObjectAnimator animation31 = ObjectAnimator.ofFloat(mDuarionLl, "scaleY", 1.0f);
-                ObjectAnimator animation41 = ObjectAnimator.ofFloat(mDuarionLl, "scaleX", 1.0f);
-                animatorSetCenterInfo.playTogether(animation11, animation21, animation31,
-                        animation41);
-                animatorSetCenterInfo.setDuration(300).start();
+                animatorSetCenter.start();
+                animatorSetCenterInfo.start();
             }
         } else {
             mNameTv.setScaleX(1.55f);
@@ -108,58 +137,42 @@ public class WearableListItemLayout extends FrameLayout
 
     @Override
     public void onNonCenterPosition(boolean animate, int dy) {
-
-
         if (animate) {
             if (!inTouchIng) {
-                ObjectAnimator animation1 = ObjectAnimator.ofFloat(mNameTv, "scaleY", 1.0f);
-                ObjectAnimator animation2 = ObjectAnimator.ofFloat(mNameTv, "scaleX", 1.0f);
-                ObjectAnimator animation3 = ObjectAnimator.ofFloat(mNameTv, "translationY", 0.0f);
-
-                //此处的-57一直没搞清楚什么原因，原本应该是-35
-
-                animatorSetNoCenter = new AnimatorSet();
-                //animatorSetNoCenter.playTogether(animation1, animation2, animation3);
-                animatorSetNoCenter.playTogether(animation1, animation2, animation3);
-                animatorSetNoCenter.setDuration(300).start();
-
-
-                animatorSetCenterInfo = new AnimatorSet();
-                ObjectAnimator animation11 = ObjectAnimator.ofFloat(mDateTimeLl, "scaleY", 0.0f);
-                ObjectAnimator animation21 = ObjectAnimator.ofFloat(mDateTimeLl, "scaleX", 0.0f);
-                ObjectAnimator animation31 = ObjectAnimator.ofFloat(mDuarionLl, "scaleY", 0.0f);
-                ObjectAnimator animation41 = ObjectAnimator.ofFloat(mDuarionLl, "scaleX", 0.0f);
-                animatorSetCenterInfo.playTogether(animation11, animation21, animation31,
-                        animation41);
-                animatorSetCenterInfo.setDuration(300).start();
-
+                animatorSetNoCenter.start();
+                animatorSetNoCenterInfo.start();
             }
         } else {
             mNameTv.setScaleX(1.0f);
             mNameTv.setScaleY(1.0f);
             mNameTv.setTranslationY(0.0f);
-
             mDateTimeLl.setScaleX(0.0f);
             mDateTimeLl.setScaleY(0.0f);
             mDuarionLl.setScaleX(0.0f);
             mDuarionLl.setScaleY(0.0f);
-
         }
-
-
-
     }
 
     @Override
     public void onTouchDown() {
+        if(animatorSetCenter!=null&&animatorSetCenter.isRunning());{
+            animatorSetCenter.cancel();
+        }
+        if(animatorSetCenterInfo!=null&&animatorSetCenterInfo.isRunning());{
+            animatorSetCenterInfo.cancel();
+        }
+        if(animatorSetNoCenter!=null&&animatorSetNoCenter.isRunning());{
+            animatorSetNoCenter.cancel();
+        }
+        if(animatorSetNoCenterInfo!=null&&animatorSetNoCenterInfo.isRunning());{
+            animatorSetNoCenterInfo.cancel();
+        }
+
         mDateTimeLl.setScaleX(0.0f);
         mDateTimeLl.setScaleY(0.0f);
         mDuarionLl.setScaleX(0.0f);
         mDuarionLl.setScaleY(0.0f);
         inTouchIng = true;
-
-
-
     }
 
     @Override

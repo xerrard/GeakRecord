@@ -176,7 +176,7 @@ public class PlayerActivity extends Activity implements View.OnClickListener, Me
         if (!isBlueToothHeadsetConnected()) {
             Toast.makeText(PlayerActivity.this, R.string.toast_play_bt_headset, Toast.LENGTH_LONG)
                     .show();
-            return;
+            //return;
         }
         player.start();
         task = new MediaObserver();

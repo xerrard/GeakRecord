@@ -25,6 +25,8 @@
             android:layout_marginTop="46px"
             android:gravity="center_horizontal"
             android:orientation="horizontal"
+            android:scaleX="0"
+            android:scaleY="0"
         >
             <TextView
                 android:id="@+id/record_date"
@@ -54,6 +56,8 @@
             android:layout_marginTop="18px"
             android:gravity="center_horizontal"
             android:orientation="horizontal"
+            android:scaleX="0"
+            android:scaleY="0"
         >
             <ImageView
                 android:id="@+id/record_duration_img"

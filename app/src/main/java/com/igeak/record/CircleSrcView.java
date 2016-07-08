@@ -175,20 +175,16 @@ public class CircleSrcView extends View {
     }
 
     public void setProgress(float progress) {
-        Log.e(TAG, "sdsmProgress:" + progress);
         this.mProgress = progress * 100;
-        Log.e(TAG, "mProgress:" + mProgress);
         invalidate();
 
     }
 
     public float getProgress() {
-        Log.e(TAG, "mProgress:" + mProgress);
         return mProgress;
     }
 
     private int getSuqare() {
-        Log.e(TAG, "width::" + getWidth() + "\t height::" + getHeight());
         return (getWidth() < getHeight()) ? getWidth() : getHeight();
     }
 

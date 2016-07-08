@@ -255,11 +255,7 @@ public class WearListActivity extends Activity
 
                 MediaPlayer player = MediaPlayer.create(mContext, Uri.fromFile(file));
                 int time = player.getDuration();
-                if (player != null) {
-                    player.release();
-                    player = null;
-                }
-
+                player.release();
                 String duration = tf.format(new Date(time));
 
                 String name = mContext.getString(R.string.record)

@@ -14,6 +14,7 @@ import android.widget.Chronometer;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -30,6 +31,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     //private static final int STATE_RECORDSTOPED = 3;
     //private static final int STATE_PAUSE = 4;
     public static String LOG_TAG = "geak_recorder";
+    private static final long MEMORY_LIMIT = 200; //单位MB，保证存储空间大于200M
     private String currentFileName;
     private MediaRecorder recorder;
 
@@ -78,6 +80,27 @@ public class MainActivity extends Activity implements View.OnClickListener {
         //mListIb.setActivated(false);
         initRecord();
 
+        mTimeTv.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
+            @Override
+            public void onChronometerTick(Chronometer chronometer) {
+                String time = chronometer.getText().toString();
+                if ("6:00:00".equals(time)) {// 判断五秒之后，让手机震动
+                    mTimeTv.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), getString(R.string
+                                    .toast_record_over_6hours), Toast.LENGTH_LONG).show();
+                            mTimeTv.stop();
+                            mTimeTv.setBase(SystemClock.elapsedRealtime());
+
+                            stopRecordToInit();
+                        }
+                    });
+
+
+                }
+            }
+        });
     }
 
 
@@ -89,7 +112,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
             }
         } else if (state == STATE_PRE_RECORD) {
             if (view.getId() == R.id.record_setup) {
-                record();
+                long SDAvailableSize = MemorySpaceCheck.getSDAvailableSize() / 1024 / 1024;
+                if (SDAvailableSize > MEMORY_LIMIT) {
+                    record();
+                } else {
+                    Toast.makeText(getApplicationContext(), getString(R.string
+                            .toast_memory_not_enough), Toast.LENGTH_LONG).show();
+                }
+
             }
         } else if (state == STATE_RECORDING) {
             if (view.getId() == R.id.record_back) {
@@ -104,6 +134,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     /**
      * 第一次进入，保持1s时间，然后动画切换到pre模式
      */
+
     private void initRecord() {
         final Timer timer = new Timer();
         state = STATE_INIT;
@@ -168,6 +199,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         //mListIb.setActivated(true);
         mBackIb.setActivated(true);
         mTimeTv.setBase(SystemClock.elapsedRealtime());
+        //mTimeTv.setBase(15000);
         mTimeTv.start();
         mediaRecording(); //开始录音
         state = STATE_RECORDING;
