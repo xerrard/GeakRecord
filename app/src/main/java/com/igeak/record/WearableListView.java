@@ -114,7 +114,7 @@ public class WearableListView extends RecyclerView {
         };
         this.mNotifyChildrenPostLayoutRunnable = new Runnable() {
             public void run() {
-                WearableListView.this.notifyChildrenAboutProximity(false,0);
+                WearableListView.this.notifyChildrenAboutProximity(false, 0);
             }
         };
         this.mObserver = new WearableListView.OnChangeObserver();
@@ -128,7 +128,7 @@ public class WearableListView extends RecyclerView {
                     //WearableListView.this.onScrollStop();
                 }
 
-                if(newState == SCROLL_STATE_DRAGGING){
+                if (newState == SCROLL_STATE_DRAGGING) {
                     //WearableListView.this.onScrollStart();
                 }
                 if (newState == 0 && WearableListView.this.getChildCount() > 0) {
@@ -147,7 +147,7 @@ public class WearableListView extends RecyclerView {
             }
 
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                Log.i("xerrard", "RecyclerView onScrolled" + "  dy = " + dy);
+                //Log.i("xerrard", "RecyclerView onScrolled" + "  dy = " + dy);
                 WearableListView.this.onScroll(dy);
             }
         };
@@ -249,15 +249,21 @@ public class WearableListView extends RecyclerView {
             if (this.getChildCount() > 0) {
                 int action = event.getActionMasked();
                 if (action == 0) {
-                    WearableListView.this.onTouchDown();
+
                     this.handleTouchDown(event);
                 } else if (action == 1) {
                     WearableListView.this.onTouchUp();
                     this.handleTouchUp(event, scrollState);
                     this.getParent().requestDisallowInterceptTouchEvent(false);
                 } else if (action == 2) {
+
+                    if (Math.abs(this.mTapPositionY - (int) event.getY()) >= this.mTouchSlop*2) {
+                        WearableListView.this.onTouchDown();
+                    }  //xerrard
+
                     if (Math.abs(this.mTapPositionX - (int) event.getX()) >= this.mTouchSlop ||
                             Math.abs(this.mTapPositionY - (int) event.getY()) >= this.mTouchSlop) {
+
                         this.releasePressedItem();
                         this.mCanClick = false;
                     }
@@ -298,13 +304,12 @@ public class WearableListView extends RecyclerView {
                     .next();
             listener.onScroll(dy);
         }
-        this.notifyChildrenAboutProximity(true,dy);
-
+        this.notifyChildrenAboutProximity(true, dy);
 
 
     }
 
-    private void onTouchDown(){
+    private void onTouchDown() {
         this.onAllItemTouch(true);
     }
 
@@ -352,7 +357,6 @@ public class WearableListView extends RecyclerView {
             }
         }
     }
-
 
 
     public void addOnScrollListener(WearableListView.OnScrollListener listener) {
@@ -707,7 +711,7 @@ public class WearableListView extends RecyclerView {
         this.mMaximizeSingleItem = maximizeSingleItem;
     }
 
-    private void notifyChildrenAboutProximity(boolean animate,int dy) {
+    private void notifyChildrenAboutProximity(boolean animate, int dy) {
         //onAllItemScroll(animate);
 
         WearableListView.LayoutManager layoutManager = (WearableListView.LayoutManager) this
@@ -720,7 +724,7 @@ public class WearableListView extends RecyclerView {
             for (position = 0; position < count; ++position) {
                 View view = layoutManager.getChildAt(position);
                 WearableListView.ViewHolder listener = this.getChildViewHolder(view);
-                listener.onCenterProximity(position == index, animate,dy);
+                listener.onCenterProximity(position == index, animate, dy);
 
             }
 
@@ -855,14 +859,14 @@ public class WearableListView extends RecyclerView {
             super(itemView);
         }
 
-        protected void onCenterProximity(boolean isCentralItem, boolean animate,int dy) {
+        protected void onCenterProximity(boolean isCentralItem, boolean animate, int dy) {
             if (this.itemView instanceof WearableListView.OnCenterProximityListener) {
                 WearableListView.OnCenterProximityListener item = (WearableListView
                         .OnCenterProximityListener) this.itemView;
                 if (isCentralItem) {
-                    item.onCenterPosition(animate,dy);
+                    item.onCenterPosition(animate, dy);
                 } else {
-                    item.onNonCenterPosition(animate,dy);
+                    item.onNonCenterPosition(animate, dy);
                 }
 
             }
@@ -889,7 +893,6 @@ public class WearableListView extends RecyclerView {
         }
 
     }
-
 
 
     private static class SmoothScroller extends LinearSmoothScroller {
@@ -955,9 +958,9 @@ public class WearableListView extends RecyclerView {
     }
 
     public interface OnCenterProximityListener {
-        void onCenterPosition(boolean var1,int dy);
+        void onCenterPosition(boolean var1, int dy);
 
-        void onNonCenterPosition(boolean var1,int dy);
+        void onNonCenterPosition(boolean var1, int dy);
     }
 
     public interface onItemScroll {

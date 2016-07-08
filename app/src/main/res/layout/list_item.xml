@@ -14,9 +14,9 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:includeFontPadding="false"
+            android:text="@string/debug_recordname"
             android:textColor="#FFF"
-            android:textSize="28px"
-        android:text="档案 1"/>
+            android:textSize="18px"/>
 
         <LinearLayout
             android:id="@+id/datetime_ll"
@@ -25,15 +25,15 @@
             android:layout_marginTop="46px"
             android:gravity="center_horizontal"
             android:orientation="horizontal"
-        android:visibility="gone">
+        >
             <TextView
                 android:id="@+id/record_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:includeFontPadding="false"
+                android:text="@string/debug_date"
                 android:textColor="#F77D27"
                 android:textSize="24px"
-                android:text="2015/03/15"
             />
             <TextView
                 android:id="@+id/record_time"
@@ -41,9 +41,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="21px"
                 android:includeFontPadding="false"
+                android:text="@string/debug_time"
                 android:textColor="#F77D27"
-                android:textSize="24px"
-            android:text="AM 08:30"/>
+                android:textSize="24px"/>
         </LinearLayout>
 
         <LinearLayout
@@ -54,7 +54,7 @@
             android:layout_marginTop="18px"
             android:gravity="center_horizontal"
             android:orientation="horizontal"
-            android:visibility="gone">
+        >
             <ImageView
                 android:id="@+id/record_duration_img"
                 android:layout_width="38px"
@@ -68,53 +68,21 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16px"
                 android:includeFontPadding="false"
+                android:text="@string/debug_durate"
                 android:textSize="24px"/>
         </LinearLayout>
     </RelativeLayout>
 
-    <RelativeLayout
-        android:id="@+id/item_img_rl"
-        android:layout_width="match_parent"
-        android:layout_height="99px"
-        android:visibility="gone"
-    >
-
-        <ImageView
-            android:layout_width="59px"
-            android:layout_height="59px"
-            android:layout_centerInParent="true"
-            android:background="@drawable/smallrecord"
-        />
-    </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/item_info_rl_up"
+        android:id="@+id/item_info_rl"
         android:layout_width="match_parent"
         android:layout_height="120px"
         android:visibility="gone"
 
     >
         <TextView
-            android:id="@+id/record_name_small_up"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:includeFontPadding="false"
-            android:textSize="18px"
-
-        />
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/item_info_rl_down"
-        android:layout_width="match_parent"
-        android:layout_height="120px"
-        android:layout_gravity="bottom"
-        android:visibility="gone"
-
-    >
-        <TextView
-            android:id="@+id/record_name_small_down"
+            android:id="@+id/record_name_small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"

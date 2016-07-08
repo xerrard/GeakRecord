@@ -24,4 +24,9 @@
     <string name="record">record</string>
 
     <string name="are_you_sure">Are you sure?</string>
+
+    <string name="debug_recordname">record 01</string>
+    <string name="debug_date">2015/03/15</string>
+    <string name="debug_time">AM 08:30</string>
+    <string name="debug_durate">00:30</string>
 </resources>

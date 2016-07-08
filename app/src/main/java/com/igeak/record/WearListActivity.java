@@ -7,9 +7,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 
-import com.igeak.record.WearableListView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +17,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
-import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -198,7 +195,6 @@ public class WearListActivity extends Activity
         // Provide a reference to the type of views you're using
         public static final class ItemViewHolder extends WearableListView.ViewHolder {
 
-            private RelativeLayout mImgRl;
             private ImageView mRecordIv;
 
             private RelativeLayout mDetailRl;
@@ -211,15 +207,9 @@ public class WearListActivity extends Activity
             private RelativeLayout mInfoupRl;
             private TextView mSmallNameupTv;
 
-            private RelativeLayout mInfodownRl;
-            private TextView mSmallNamedownTv;
-
 
             public ItemViewHolder(View itemView) {
                 super(itemView);
-                // find the text view within the custom item's layout
-                mImgRl = (RelativeLayout) itemView.findViewById(R.id.item_img_rl);
-                //mRecordIv = itemView.findViewById(R.id.)
 
                 mDetailRl = (RelativeLayout) itemView.findViewById(R.id.item_detail_rl);
                 mNameTv = (TextView) itemView.findViewById(R.id.record_name);
@@ -227,82 +217,62 @@ public class WearListActivity extends Activity
                 mTimeTv = (TextView) itemView.findViewById(R.id.record_time);
                 mDuationImg = (ImageView) itemView.findViewById(R.id.record_duration_img);
                 mDuationTv = (TextView) itemView.findViewById(R.id.record_duration);
+                mInfoupRl = (RelativeLayout) itemView.findViewById(R.id.item_info_rl);
+                mSmallNameupTv = (TextView) itemView.findViewById(R.id.record_name_small);
 
-                mInfoupRl = (RelativeLayout) itemView.findViewById(R.id.item_info_rl_up);
-                mSmallNameupTv = (TextView) itemView.findViewById(R.id.record_name_small_up);
-
-                mInfodownRl = (RelativeLayout) itemView.findViewById(R.id.item_info_rl_down);
-                mSmallNamedownTv = (TextView) itemView.findViewById(R.id.record_name_small_down);
             }
         }
 
-        // Create new views for list items
-        // (invoked by the WearableListView's layout manager)
+
         @Override
         public WearableListView.ViewHolder onCreateViewHolder(ViewGroup parent,
                                                               int viewType) {
-            // Inflate our custom layout for list items
             return new ItemViewHolder(mInflater.inflate(R.layout.list_item, null));
         }
 
-        // Replace the contents of a list item
-        // Instead of creating new views, the list tries to recycle existing ones
-        // (invoked by the WearableListView's layout manager)
+
         @Override
         public void onBindViewHolder(WearableListView.ViewHolder holder,
                                      int position) {
             ItemViewHolder itemHolder = (ItemViewHolder) holder;
 
-            if (position >= 0) {
-                int currentIndex = position;
+            int currentIndex = position;
 
-                File file = files[currentIndex];
-                String dateString = file.getName().substring(3);
+            File file = files[currentIndex];
+            String dateString = file.getName().substring(3);
 
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
 
-                SimpleDateFormat tf = new SimpleDateFormat("mm:ss");
+            SimpleDateFormat tf = new SimpleDateFormat("mm:ss");
 
+            try {
+                Date date = sdf.parse(dateString);
+                SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy/MM/dd");
+                String dateText = sdfDate.format(date);
 
-                try {
-                    Date date = sdf.parse(dateString);
-                    System.out.println(date);
+                SimpleDateFormat sdfName = new SimpleDateFormat("a HH:mm");
+                String timeText = sdfName.format(date);
 
-                    // SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd");
-                    SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy/MM/dd");
-                    String dateText = sdfDate.format(date);
-
-                    SimpleDateFormat sdfName = new SimpleDateFormat("a HH:mm");
-                    String timeText = sdfName.format(date);
-
-                    MediaPlayer player = MediaPlayer.create(mContext, Uri.fromFile(file));
-                    int time = player.getDuration();
-                    if (player != null) {
-                        player.release();
-                        player = null;
-                    }
-
-                    String duration = tf.format(new Date(time));
-
-                    String name = mContext.getString(R.string.record)
-                            + " " + String.format("%02d", currentIndex + 1);
-                    itemHolder.mNameTv.setText(name);
-                    itemHolder.mSmallNameupTv.setText(name);
-                    itemHolder.mSmallNamedownTv.setText(name);
-                    itemHolder.mDateTv.setText(dateText);
-                    itemHolder.mTimeTv.setText(timeText);
-                    itemHolder.mDuationTv.setText(duration);
-
-                    itemHolder.mImgRl.setVisibility(View.GONE);
-
-
-                } catch (Exception e) {
-                    e.printStackTrace();
+                MediaPlayer player = MediaPlayer.create(mContext, Uri.fromFile(file));
+                int time = player.getDuration();
+                if (player != null) {
+                    player.release();
+                    player = null;
                 }
-            } else {
-                itemHolder.mImgRl.setVisibility(View.VISIBLE);
-                itemHolder.mInfoupRl.setVisibility(View.GONE);
-                itemHolder.mDetailRl.setVisibility(View.GONE);
+
+                String duration = tf.format(new Date(time));
+
+                String name = mContext.getString(R.string.record)
+                        + " " + String.format("%02d", currentIndex + 1);
+                itemHolder.mNameTv.setText(name);
+                itemHolder.mSmallNameupTv.setText(name);
+                itemHolder.mDateTv.setText(dateText);
+                itemHolder.mTimeTv.setText(timeText);
+                itemHolder.mDuationTv.setText(duration);
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
             }
 
             holder.itemView.setTag(position);

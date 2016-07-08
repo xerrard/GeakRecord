@@ -16,6 +16,7 @@
         android:id="@+id/item_img_rl"
         android:layout_width="match_parent"
         android:layout_height="99px"
+
     >
 
         <ImageView
@@ -25,13 +26,6 @@
             android:background="@drawable/smallrecord"
         />
     </RelativeLayout>
-
-    <!--<ImageView-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="163px"-->
-        <!--android:layout_gravity="center"-->
-        <!--android:background="@drawable/rect"-->
-    <!--android:visibility="gone"/>-->
 
 </FrameLayout>
 
