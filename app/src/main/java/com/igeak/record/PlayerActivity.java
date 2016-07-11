@@ -139,15 +139,15 @@ public class PlayerActivity extends Activity implements View.OnClickListener, Me
 
     private void queryDelete() {
         Intent intent = new Intent(this, QueryDelete.class);
-        startActivityForResult(intent,Const.REQUESTCODE_QUERY_DELETE);
+        startActivityForResult(intent, Const.REQUESTCODE_QUERY_DELETE);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode==Const.REQUESTCODE_QUERY_DELETE){
-            if(resultCode==Const.RESULTCODE_OK){
+        if (requestCode == Const.REQUESTCODE_QUERY_DELETE) {
+            if (resultCode == Const.RESULTCODE_OK) {
                 try {
                     pauseMusic(); //先暂停播放
                     delete();
@@ -156,8 +156,7 @@ public class PlayerActivity extends Activity implements View.OnClickListener, Me
                     Log.e(MainActivity.LOG_TAG, "delete Record failed " + e.getMessage());
                 }
                 finish();
-            }
-            else if(resultCode==Const.RESULTCODE_CANCEL){
+            } else if (resultCode == Const.RESULTCODE_CANCEL || requestCode == 0) {
 
             }
         }
@@ -174,8 +173,8 @@ public class PlayerActivity extends Activity implements View.OnClickListener, Me
 
     private void playMusic() {
         if (!isBlueToothHeadsetConnected()) {
-            Toast.makeText(PlayerActivity.this, R.string.toast_play_bt_headset, Toast.LENGTH_LONG)
-                    .show();
+//            Toast.makeText(PlayerActivity.this, R.string.toast_play_bt_headset, Toast.LENGTH_LONG)
+//                    .show();
             //return;
         }
         player.start();

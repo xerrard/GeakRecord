@@ -41,7 +41,7 @@ public class WearListActivity extends Activity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         files = getAllRecordFileNames();
-        if (files.length == 0) {
+        if (files == null || files.length == 0) {
             Toast.makeText(getApplicationContext(), getString(R.string.toast_file_not_exist),
                     Toast.LENGTH_LONG).show();
             finish();
@@ -129,13 +129,18 @@ public class WearListActivity extends Activity
 
     private File[] getAllRecordFileNames() {
         File mfile = new File(MainActivity.FILE_PATH);
+        if (!mfile.exists()) {
+            mfile.mkdir();
+        }
         File[] filelist = mfile.listFiles();
-        Arrays.sort(filelist, new Comparator<File>() {
-            @Override
-            public int compare(File file, File t1) {
-                return file.lastModified() < t1.lastModified() ? 1 : -1;
-            }
-        });
+        if (filelist != null && filelist.length > 0) {
+            Arrays.sort(filelist, new Comparator<File>() {
+                @Override
+                public int compare(File file, File t1) {
+                    return file.lastModified() < t1.lastModified() ? 1 : -1;
+                }
+            });
+        }
         return filelist;
     }
 
@@ -163,9 +168,9 @@ public class WearListActivity extends Activity
         super.onActivityResult(requestCode, resultCode, data);
         if ((Const.REQUESTCODE_PLAYER == requestCode) && (Const.RESULTCODE_UPDATE == resultCode)) {
             files = getAllRecordFileNames();
-            if (files.length == 0) {
-//                Toast.makeText(getApplicationContext(), getString(R.string.toast_file_not_exist),
-//                        Toast.LENGTH_LONG).show();
+            if (files == null || files.length == 0) {
+                Toast.makeText(getApplicationContext(), getString(R.string.toast_file_not_exist),
+                        Toast.LENGTH_LONG).show();
                 finish();
             }
             myListAdapter.setFiles(files);

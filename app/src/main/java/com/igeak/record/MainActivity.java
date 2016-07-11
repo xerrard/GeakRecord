@@ -123,7 +123,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
             }
         } else if (state == STATE_RECORDING) {
             if (view.getId() == R.id.record_back) {
-                queryStopRecord();
+                //queryStopRecord(); //修改需求，不再确认，点击Back直接取消录音
+                deleteFile();
+                stopRecordToInit();
             } else if (view.getId() == R.id.record_setup) {
                 stopRecordToQuerySave();
             }
@@ -226,19 +228,21 @@ public class MainActivity extends Activity implements View.OnClickListener {
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
-                final Timer timer = new Timer();
-                timer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        mTimeTv.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                querySaveRecord();
-                                timer.cancel();
-                            }
-                        });
-                    }
-                }, Const.ANIMATION_LONG_1000);
+//                final Timer timer = new Timer();
+//                timer.schedule(new TimerTask() {
+//                    @Override
+//                    public void run() {
+//                        mTimeTv.post(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                querySaveRecord();
+//                                timer.cancel();
+//                            }
+//                        });
+//                    }
+//                }, Const.ANIMATION_LONG_500);
+
+                querySaveRecord();
             }
         };
 
@@ -286,17 +290,26 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private void recordAnimation2() {
         ObjectAnimator animation1;
         ObjectAnimator animation2;
+        mBackIb = (ImageButton) findViewById(R.id.record_back);
+        mSetupIb = (ImageButton) findViewById(R.id.record_setup);
+        mListIb = (ImageButton) findViewById(R.id.record_list);
 
-        ObjectAnimator animation3 = ObjectAnimator.ofFloat(mControlRl, "scaleY", 0.0f, 1.0f);
-        ObjectAnimator animation4 = ObjectAnimator.ofFloat(mControlRl, "scaleX", 0.0f, 1.0f);
+        ObjectAnimator animation3 = ObjectAnimator.ofFloat(mBackIb, "scaleY", 0.0f, 1.0f);
+        ObjectAnimator animation4 = ObjectAnimator.ofFloat(mBackIb, "scaleX", 0.0f, 1.0f);
+        ObjectAnimator animation5 = ObjectAnimator.ofFloat(mSetupIb, "scaleY", 0.0f, 1.0f);
+        ObjectAnimator animation6 = ObjectAnimator.ofFloat(mSetupIb, "scaleX", 0.0f, 1.0f);
+        ObjectAnimator animation7 = ObjectAnimator.ofFloat(mListIb, "scaleY", 0.0f, 1.0f);
+        ObjectAnimator animation8 = ObjectAnimator.ofFloat(mListIb, "scaleX", 0.0f, 1.0f);
         AnimatorSet animatorSet = new AnimatorSet();
         if (mTimeTv.getVisibility() == View.GONE) {
             mTimeTv.setVisibility(View.VISIBLE);
             animation1 = ObjectAnimator.ofFloat(mTimeTv, "scaleX", 0.0f, 1.0f);
             animation2 = ObjectAnimator.ofFloat(mTimeTv, "scaleY", 0.0f, 1.0f);
-            animatorSet.playTogether(animation1, animation2, animation3, animation4);
+            animatorSet.playTogether(animation1, animation2, animation3, animation4, animation5,
+                    animation6, animation7, animation8);
         } else {
-            animatorSet.playTogether(animation3, animation4);
+            animatorSet.playTogether(animation3, animation4, animation5,
+                    animation6, animation7, animation8);
         }
         animatorSet.setDuration(Const.ANIMATION_LONG_1000).start();
     }
@@ -322,10 +335,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
      */
     private void recordAnimation3() {
         ObjectAnimator animator1 = ObjectAnimator.ofFloat(mRecordMidTv, "alpha", 0f, 1f);
-        animator1.setRepeatCount(20);
+        animator1.setRepeatCount(ObjectAnimator.INFINITE);
         animator1.setDuration(Const.ANIMATION_LONG_2000);
         ObjectAnimator animator2 = ObjectAnimator.ofFloat(mRecordMidTv, "alpha", 0f, 1f);
-        animator2.setRepeatCount(20);
+        animator2.setRepeatCount(ObjectAnimator.INFINITE);
         animator2.setDuration(Const.ANIMATION_LONG_2000);
         ObjectAnimator.ofFloat(mRecordOutTv, "alpha", 0f, 1f).setRepeatCount(10);
         AnimatorSet set = new AnimatorSet();
@@ -353,7 +366,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 startActivityForResult(new Intent(this, WearListActivity.class), Const
                         .REQUESTCODE_LIST);
                 //state = STATE_RECORDSTOPED;
-            } else if (resultCode == Const.RESULTCODE_CANCEL) {
+            } else if (resultCode == Const.RESULTCODE_CANCEL || resultCode == 0) {
                 try {
                     deleteFile();
                     //state = STATE_RECORDSTOPED;
@@ -365,10 +378,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         } else if (requestCode == Const.REQUESTCODE_QUERY_STOP_RECORD) {
             if (resultCode == Const.RESULTCODE_OK) {
+                deleteFile();
                 stopRecordToInit();
                 //state = STATE_RECORDSTOPED;
 
-            } else if (resultCode == Const.RESULTCODE_CANCEL) {
+            } else if (resultCode == Const.RESULTCODE_CANCEL || resultCode == 0) {
 
             }
         } else if (requestCode == Const.REQUESTCODE_LIST) {
@@ -431,6 +445,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
         if (recorder != null) {
             recorder.release();
             recorder = null;
+            Toast.makeText(getApplicationContext(), getString(R.string.toast_recording_destroy),
+                    Toast.LENGTH_LONG).show();
         }
         super.onDestroy();
     }
