@@ -307,9 +307,9 @@ public class PlayerActivity extends Activity implements View.OnClickListener, Me
                     }
 
                 }
-//                if (state == STATE_INIT) {
-//                    publishProgress(1.0f);
-//                }
+                if (state == STATE_INIT) {
+                    publishProgress(1.0f);
+                }
             } catch (Exception e) {
                 Log.e(MainActivity.LOG_TAG, "prepare() failed");
             }
