@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 
 
+import android.support.wearable.complications.TimeFormatText;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * Created by xuqiang on 16-7-1.
@@ -248,7 +250,6 @@ public class WearListActivity extends Activity
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
 
-            SimpleDateFormat tf = new SimpleDateFormat("mm:ss");
 
             try {
                 Date date = sdf.parse(dateString);
@@ -261,7 +262,14 @@ public class WearListActivity extends Activity
                 MediaPlayer player = MediaPlayer.create(mContext, Uri.fromFile(file));
                 int time = player.getDuration();
                 player.release();
-                String duration = tf.format(new Date(time));
+
+                SimpleDateFormat tf = new SimpleDateFormat("mm:ss");
+                tf.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+                if (time > 3600000) {
+                    tf.applyPattern("HH:mm:ss");
+                }
+                String duration = tf.format(time);
 
                 String name = mContext.getString(R.string.record)
                         + " " + String.format("%02d", currentIndex + 1);

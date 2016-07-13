@@ -117,7 +117,7 @@ public class WearableListItemLayout extends FrameLayout
 
 
     @Override
-    public void onCenterPosition(boolean animate, int dy) {
+    public void onCenterPosition(boolean animate) {
         if (animate) {
             if (!inTouchIng) {
                 animatorSetCenter.start();
@@ -136,7 +136,7 @@ public class WearableListItemLayout extends FrameLayout
     }
 
     @Override
-    public void onNonCenterPosition(boolean animate, int dy) {
+    public void onNonCenterPosition(boolean animate) {
         if (animate) {
             if (!inTouchIng) {
                 animatorSetNoCenter.start();

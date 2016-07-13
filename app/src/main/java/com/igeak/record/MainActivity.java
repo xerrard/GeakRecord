@@ -28,7 +28,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private static final int STATE_INIT = 0;
     private static final int STATE_PRE_RECORD = 1;
     private static final int STATE_RECORDING = 2;
-    //private static final int STATE_RECORDSTOPED = 3;
+    private static final int STATE_WAITING = 3;
     //private static final int STATE_PAUSE = 4;
     public static String LOG_TAG = "geak_recorder";
     private static final long MEMORY_LIMIT = 200; //单位MB，保证存储空间大于200M
@@ -197,14 +197,20 @@ public class MainActivity extends Activity implements View.OnClickListener {
         mRecordMidTv.setVisibility(View.VISIBLE);
         mRecordOutTv.setVisibility(View.VISIBLE);
         recordAnimation3();
-        mSetupIb.setActivated(true);
-        //mListIb.setActivated(true);
         mBackIb.setActivated(true);
+        mSetupIb.setActivated(true);
         mTimeTv.setBase(SystemClock.elapsedRealtime());
         //mTimeTv.setBase(15000);
         mTimeTv.start();
         mediaRecording(); //开始录音
-        state = STATE_RECORDING;
+        state = STATE_WAITING;
+        mTimeTv.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                state = STATE_RECORDING;
+            }
+        }, 2000);
+
     }
 
 //    private void pauseRecord() {
