@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -36,10 +37,16 @@ public class PlayerActivity extends Activity implements View.OnClickListener, Me
     ImageButton mSetupIb;
     ImageButton mDeleteIb;
     CircleSrcView mCircle;
-    boolean isPlaying = false;
+    //boolean isPlaying = false;
     File currentFile;
     MediaPlayer player;
     MediaObserver task;
+    int durationInt = 0;
+    private static final int STATE_INIT = 1001;
+    private static final int STATE_PLAYING = 1002;
+    private static final int STATE_PAUSE = 1003;
+    private int state;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +58,7 @@ public class PlayerActivity extends Activity implements View.OnClickListener, Me
         files = getAllRecordFile();
         currentFile = files[currentIndex];
         showFileInfo(currentFile);
+        state = STATE_INIT;
 
     }
 
@@ -104,15 +112,17 @@ public class PlayerActivity extends Activity implements View.OnClickListener, Me
             player.setOnErrorListener(PlayerActivity.this);
             player.setOnCompletionListener(PlayerActivity.this);
             //player.prepare();
-            int time = player.getDuration();
+            durationInt = player.getDuration();
+            //player.reset();
+            //player.stop();
 
             SimpleDateFormat tf = new SimpleDateFormat("mm:ss");
             tf.setTimeZone(TimeZone.getTimeZone("UTC"));
 
-            if (time > 3600000) {
+            if (durationInt > 3600000) {
                 tf.applyPattern("HH:mm:ss");
             }
-            String duration = tf.format(time);
+            String duration = tf.format(durationInt);
 
             String name = getString(R.string.record)
                     + " " + String.format("%02d", currentIndex + 1);
@@ -131,12 +141,13 @@ public class PlayerActivity extends Activity implements View.OnClickListener, Me
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.play_setup) {
-            if (isPlaying) {
+            if (state == STATE_PLAYING) {
                 pauseMusic();
+            } else if (state == STATE_PAUSE) {
 
-            } else {
+                resumeMusic();
+            } else if (state == STATE_INIT) {
                 playMusic();
-
             }
         } else if (view.getId() == R.id.play_delete) {
             queryDelete();
@@ -178,6 +189,26 @@ public class PlayerActivity extends Activity implements View.OnClickListener, Me
         super.onDestroy();
     }
 
+    private void resumeMusic() {
+        if (!isBlueToothHeadsetConnected()) {
+//            Toast.makeText(PlayerActivity.this, R.string.toast_play_bt_headset, Toast.LENGTH_LONG)
+//                    .show();
+            //return;
+        }
+//        try {
+//            player.prepare();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+        player.start();
+        task = new MediaObserver();
+        task.execute();
+        //task.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+        mSetupIb.setActivated(true);
+        //isPlaying = true;
+        state = STATE_PLAYING;
+    }
+
     private void playMusic() {
         if (!isBlueToothHeadsetConnected()) {
 //            Toast.makeText(PlayerActivity.this, R.string.toast_play_bt_headset, Toast.LENGTH_LONG)
@@ -187,19 +218,20 @@ public class PlayerActivity extends Activity implements View.OnClickListener, Me
         player.start();
         task = new MediaObserver();
         task.execute();
+        //task.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
         mSetupIb.setActivated(true);
-        isPlaying = true;
-
+        //isPlaying = true;
+        state = STATE_PLAYING;
     }
 
     private void pauseMusic() {
         player.pause();
-        if (task != null) {
+        if (!task.isCancelled()) {
             task.cancel(true);
-            task = null;
         }
         mSetupIb.setActivated(false);
-        isPlaying = false;
+        //isPlaying = false;
+        state = STATE_PAUSE;
     }
 
     private void delete() {
@@ -237,13 +269,20 @@ public class PlayerActivity extends Activity implements View.OnClickListener, Me
 
     @Override
     public void onCompletion(MediaPlayer mediaPlayer) {
-        if (task != null) {
-            task.cancel(true);
-            task = null;
-        }
-        mCircle.setVisibility(View.GONE);
+        state = STATE_INIT;
+//        if (!task.isCancelled()) {
+//            task.cancel(true);
+//        }
+//        mCircle.setProgress(1.0f);
+        mCircle.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mCircle.setVisibility(View.GONE);
+            }
+        }, 500);
         mSetupIb.setActivated(false);
-        isPlaying = false;
+        //isPlaying = false;
+
     }
 
     private class MediaObserver extends AsyncTask<Void, Float, Void> {
@@ -252,17 +291,25 @@ public class PlayerActivity extends Activity implements View.OnClickListener, Me
         protected Void doInBackground(Void... voids) {
 
             try {
-                int duration;
+                //int duration = player.getDuration();
                 int currentPosition;
-                float currentRatio = 0.0f;
+                float lastRatio = 0.0f;
                 while (((currentPosition = player.getCurrentPosition())
-                        < (duration = player.getDuration())) && (currentRatio <= 0.99f)) {
-                    float ratio = duration == 0 ? 0 : (float) currentPosition / (float) duration;
-                    if (ratio >= currentRatio) {
-                        currentRatio = currentRatio + 0.01f;
-                        publishProgress(currentRatio);
+                        < durationInt) && state == STATE_PLAYING) {
+
+                    float ratio = (float) currentPosition / (float) durationInt;
+                    if (ratio > (lastRatio + 0.01f)) {
+                        float tempRatio = lastRatio;
+                        while ((tempRatio = tempRatio + 0.01f) < ratio) {
+                            publishProgress(tempRatio + 0.01f);
+                        }
+                        lastRatio = ratio;
                     }
+
                 }
+//                if (state == STATE_INIT) {
+//                    publishProgress(1.0f);
+//                }
             } catch (Exception e) {
                 Log.e(MainActivity.LOG_TAG, "prepare() failed");
             }
