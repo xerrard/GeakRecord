@@ -1,9 +1,11 @@
 package com.igeak.record;
 
+import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -14,9 +16,11 @@ import android.widget.TextView;
  * Created by xuqiang on 16-7-1.
  */
 public class WearableListItemLayout extends FrameLayout
-        implements WearableListView.OnCenterProximityListener, WearableListView.onItemTouch {
+        implements WearableListView.OnCenterProximityListener, WearableListView.onItemTouch,
+        WearableListView.onItemScroll {
 
-
+    private static final int ANIMATION_LONG = 100;
+    private static final int ANIMATION_LONG_SHORT = 80;
     private RelativeLayout mDetailRl;
     private RelativeLayout mInfoRl;
     private TextView mNameTv;
@@ -29,11 +33,13 @@ public class WearableListItemLayout extends FrameLayout
 
     private boolean inTouchIng = false;
 
+    private boolean inScrolling = false;
 
     AnimatorSet animatorSetCenter = null;
     AnimatorSet animatorSetCenterInfo = null;
     AnimatorSet animatorSetNoCenter = null;
     AnimatorSet animatorSetNoCenterInfo = null;
+
 
     public WearableListItemLayout(Context context) {
         this(context, null);
@@ -55,7 +61,7 @@ public class WearableListItemLayout extends FrameLayout
 
         mDetailRl = (RelativeLayout) findViewById(R.id.item_detail_rl);
 
-        mInfoRl = (RelativeLayout) findViewById(R.id.item_info_rl);
+        //mInfoRl = (RelativeLayout) findViewById(R.id.item_info_rl);
         //mInfoRl = (RelativeLayout) findViewById(R.id.item_info_rl_up);
 
         mNameTv = (TextView) findViewById(R.id.record_name);
@@ -82,7 +88,7 @@ public class WearableListItemLayout extends FrameLayout
         ObjectAnimator animation3 = ObjectAnimator.ofFloat(mNameTv, "translationY", -40.0f);
         animatorSetCenter = new AnimatorSet();
         animatorSetCenter.playTogether(animation1, animation2, animation3);
-        animatorSetCenter.setDuration(300);
+        animatorSetCenter.setDuration(ANIMATION_LONG);
 
         animatorSetCenterInfo = new AnimatorSet();
         ObjectAnimator animation11 = ObjectAnimator.ofFloat(mDateTimeLl, "scaleY", 1.0f);
@@ -91,7 +97,7 @@ public class WearableListItemLayout extends FrameLayout
         ObjectAnimator animation41 = ObjectAnimator.ofFloat(mDuarionLl, "scaleX", 1.0f);
         animatorSetCenterInfo.playTogether(animation11, animation21, animation31,
                 animation41);
-        animatorSetCenterInfo.setDuration(300);
+        animatorSetCenterInfo.setDuration(ANIMATION_LONG);
 
 
         /**
@@ -102,7 +108,7 @@ public class WearableListItemLayout extends FrameLayout
         ObjectAnimator animationb2 = ObjectAnimator.ofFloat(mNameTv, "scaleX", 1.0f);
         ObjectAnimator animationb3 = ObjectAnimator.ofFloat(mNameTv, "translationY", 0.0f);
         animatorSetNoCenter.playTogether(animationb1, animationb2, animationb3);
-        animatorSetNoCenter.setDuration(300);
+        animatorSetNoCenter.setDuration(ANIMATION_LONG_SHORT);
 
         animatorSetNoCenterInfo = new AnimatorSet();
         ObjectAnimator animationb11 = ObjectAnimator.ofFloat(mDateTimeLl, "scaleY", 0.0f);
@@ -111,17 +117,24 @@ public class WearableListItemLayout extends FrameLayout
         ObjectAnimator animationb41 = ObjectAnimator.ofFloat(mDuarionLl, "scaleX", 0.0f);
         animatorSetNoCenterInfo.playTogether(animationb11, animationb21, animationb31,
                 animationb41);
-        animatorSetNoCenterInfo.setDuration(300);
-
+        animatorSetNoCenterInfo.setDuration(ANIMATION_LONG_SHORT);
     }
 
 
     @Override
     public void onCenterPosition(boolean animate) {
         if (animate) {
-            if (!inTouchIng) {
+            if (!inTouchIng && !inScrolling) {
                 animatorSetCenter.start();
                 animatorSetCenterInfo.start();
+            } else {
+                mNameTv.setScaleX(1.0f);
+                mNameTv.setScaleY(1.0f);
+                mNameTv.setTranslationY(0.0f);
+                mDateTimeLl.setScaleX(0.0f);
+                mDateTimeLl.setScaleY(0.0f);
+                mDuarionLl.setScaleX(0.0f);
+                mDuarionLl.setScaleY(0.0f);
             }
         } else {
             mNameTv.setScaleX(1.55f);
@@ -138,9 +151,17 @@ public class WearableListItemLayout extends FrameLayout
     @Override
     public void onNonCenterPosition(boolean animate) {
         if (animate) {
-            if (!inTouchIng) {
+            if (!inTouchIng && !inScrolling) {
                 animatorSetNoCenter.start();
                 animatorSetNoCenterInfo.start();
+            } else {
+                mNameTv.setScaleX(1.0f);
+                mNameTv.setScaleY(1.0f);
+                mNameTv.setTranslationY(0.0f);
+                mDateTimeLl.setScaleX(0.0f);
+                mDateTimeLl.setScaleY(0.0f);
+                mDuarionLl.setScaleX(0.0f);
+                mDuarionLl.setScaleY(0.0f);
             }
         } else {
             mNameTv.setScaleX(1.0f);
@@ -155,16 +176,20 @@ public class WearableListItemLayout extends FrameLayout
 
     @Override
     public void onTouchDown() {
-        if(animatorSetCenter!=null&&animatorSetCenter.isRunning());{
+        if (animatorSetCenter != null && animatorSetCenter.isRunning()) ;
+        {
             animatorSetCenter.cancel();
         }
-        if(animatorSetCenterInfo!=null&&animatorSetCenterInfo.isRunning());{
+        if (animatorSetCenterInfo != null && animatorSetCenterInfo.isRunning()) ;
+        {
             animatorSetCenterInfo.cancel();
         }
-        if(animatorSetNoCenter!=null&&animatorSetNoCenter.isRunning());{
+        if (animatorSetNoCenter != null && animatorSetNoCenter.isRunning()) ;
+        {
             animatorSetNoCenter.cancel();
         }
-        if(animatorSetNoCenterInfo!=null&&animatorSetNoCenterInfo.isRunning());{
+        if (animatorSetNoCenterInfo != null && animatorSetNoCenterInfo.isRunning()) ;
+        {
             animatorSetNoCenterInfo.cancel();
         }
 
@@ -178,5 +203,15 @@ public class WearableListItemLayout extends FrameLayout
     @Override
     public void onTouchUp() {
         inTouchIng = false;
+    }
+
+    @Override
+    public void onScrollStart() {
+        inScrolling = true;
+    }
+
+    @Override
+    public void onScrollStoped() {
+        inScrolling = false;
     }
 }

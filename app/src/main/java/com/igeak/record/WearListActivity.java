@@ -224,8 +224,8 @@ public class WearListActivity extends Activity
                 mTimeTv = (TextView) itemView.findViewById(R.id.record_time);
                 mDuationImg = (ImageView) itemView.findViewById(R.id.record_duration_img);
                 mDuationTv = (TextView) itemView.findViewById(R.id.record_duration);
-                mInfoupRl = (RelativeLayout) itemView.findViewById(R.id.item_info_rl);
-                mSmallNameupTv = (TextView) itemView.findViewById(R.id.record_name_small);
+                //mInfoupRl = (RelativeLayout) itemView.findViewById(R.id.item_info_rl);
+                //mSmallNameupTv = (TextView) itemView.findViewById(R.id.record_name_small);
 
             }
         }
@@ -274,7 +274,7 @@ public class WearListActivity extends Activity
                 String name = mContext.getString(R.string.record)
                         + " " + String.format("%02d", currentIndex + 1);
                 itemHolder.mNameTv.setText(name);
-                itemHolder.mSmallNameupTv.setText(name);
+                //itemHolder.mSmallNameupTv.setText(name);
                 itemHolder.mDateTv.setText(dateText);
                 itemHolder.mTimeTv.setText(timeText);
                 itemHolder.mDuationTv.setText(duration);

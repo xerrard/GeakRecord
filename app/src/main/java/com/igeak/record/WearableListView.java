@@ -125,11 +125,11 @@ public class WearableListView extends RecyclerView {
                 .support.v7.widget.RecyclerView.OnScrollListener() {
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 if (newState == SCROLL_STATE_IDLE) {
-                    //WearableListView.this.onScrollStop();
+                    WearableListView.this.onScrollStop();
                 }
 
                 if (newState == SCROLL_STATE_DRAGGING) {
-                    //WearableListView.this.onScrollStart();
+                    WearableListView.this.onScrollStart();
                 }
                 if (newState == 0 && WearableListView.this.getChildCount() > 0) {
                     WearableListView.this.handleTouchUp((MotionEvent) null, newState);
@@ -252,9 +252,10 @@ public class WearableListView extends RecyclerView {
 
                     this.handleTouchDown(event);
                 } else if (action == 1) {
-                    WearableListView.this.onTouchUp();
+
                     this.handleTouchUp(event, scrollState);
                     this.getParent().requestDisallowInterceptTouchEvent(false);
+                    WearableListView.this.onTouchUp(); //xerrard
                 } else if (action == 2) {
 
                     if (Math.abs(this.mTapPositionY - (int) event.getY()) >= this.mTouchSlop*2) {
