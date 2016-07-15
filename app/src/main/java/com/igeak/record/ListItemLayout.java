@@ -73,11 +73,11 @@ public class ListItemLayout extends FrameLayout
 //        mDateTimeLl.setScaleY(1.0f - scale);
 //        mDuarionLl.setScaleX(1.0f - scale);
 //        mDuarionLl.setScaleY(1.0f - scale);
-        if(scale==0) {
-            mDateTimeLl.setAlpha(1.0f);
-            mDuarionLl.setAlpha(1.0f);
+        if (scale < 0.3f) {
+            mDateTimeLl.setAlpha(1.0f - scale);
+            mDuarionLl.setAlpha(1.0f - scale);
 
-        }else {
+        } else {
             mDateTimeLl.setAlpha(0.0f);
             mDuarionLl.setAlpha(0.0f);
         }
