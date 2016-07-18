@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.support.wearable.view.SimpleAnimatorListener;
 import android.util.Log;
 import android.view.View;
 import android.widget.Chronometer;
@@ -165,7 +166,13 @@ public class MainActivity extends Activity implements View.OnClickListener {
         state = STATE_INIT;
 
         mTimeTv.setBase(SystemClock.elapsedRealtime());
-        mControlRl.setVisibility(View.VISIBLE);
+        //mControlRl.setVisibility(View.VISIBLE);
+        mBackIb.setScaleX(1.0f);
+        mBackIb.setScaleY(1.0f);
+        mSetupIb.setScaleX(1.0f);
+        mSetupIb.setScaleY(1.0f);
+        mListIb.setScaleX(1.0f);
+        mListIb.setScaleY(1.0f);
         mSetupIb.setActivated(false);
         //mListIb.setActivated(false);
         mBackIb.setActivated(false);
@@ -180,12 +187,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         //mTimeTv.setVisibility(View.VISIBLE);
         mTimeTv.setBase(SystemClock.elapsedRealtime());
-        mControlRl.setVisibility(View.VISIBLE);
+        //mControlRl.setVisibility(View.VISIBLE);
         mSetupIb.setActivated(false);
         //mListIb.setActivated(false);
         mBackIb.setActivated(false);
         recordAnimation1();
-        recordAnimation2();
+        //recordAnimation2();
         state = STATE_PRE_RECORD;
     }
 
@@ -256,7 +263,15 @@ public class MainActivity extends Activity implements View.OnClickListener {
         animatorSet3.cancel();
         mRecordMidTv.setVisibility(View.GONE);
         mRecordOutTv.setVisibility(View.GONE);
-        mControlRl.setVisibility(View.GONE);
+        //mControlRl.setVisibility(View.GONE);
+        mBackIb.setScaleX(0.0f);
+        mBackIb.setScaleY(0.0f);
+        mSetupIb.setScaleX(0.0f);
+        mSetupIb.setScaleY(0.0f);
+        mListIb.setScaleX(0.0f);
+        mListIb.setScaleY(0.0f);
+
+
         mTimeTv.stop();
         mediaStopRecording();
         mListIb.setActivated(false);
@@ -281,12 +296,20 @@ public class MainActivity extends Activity implements View.OnClickListener {
         ObjectAnimator animation1 = ObjectAnimator.ofFloat(mRecordIv, "scaleY", 0.65384615f);
         ObjectAnimator animation2 = ObjectAnimator.ofFloat(mRecordIv, "scaleX", 0.65384615f);
         ObjectAnimator animation3 = ObjectAnimator.ofFloat(mRecordIv, "translationY", -57.0f);
-        ObjectAnimator animation4 = ObjectAnimator.ofFloat(mTimeTv, "translationY", 1.0f);
+        ObjectAnimator animation4 = ObjectAnimator.ofFloat(mTimeTv, "translationY", 0.0f);
         //此处的-57一直没搞清楚什么原因，原本应该是-35
 
         AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.playTogether(animation1, animation2, animation3, animation4);
-        animatorSet.setDuration(Const.ANIMATION_LONG_1000).start();
+        animatorSet.playTogether(animation1, animation2, animation3,animation4);
+        animatorSet.addListener(new SimpleAnimatorListener(){
+            @Override
+            public void onAnimationEnd(Animator animator) {
+                super.onAnimationEnd(animator);
+                recordAnimation2();
+            }
+        });
+        animatorSet.setDuration(Const.ANIMATION_LONG_500).start();
+
     }
 
 
@@ -300,12 +323,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
         mSetupIb = (ImageButton) findViewById(R.id.record_setup);
         mListIb = (ImageButton) findViewById(R.id.record_list);
 
-        ObjectAnimator animation3 = ObjectAnimator.ofFloat(mBackIb, "scaleY", 0.0f, 1.0f);
-        ObjectAnimator animation4 = ObjectAnimator.ofFloat(mBackIb, "scaleX", 0.0f, 1.0f);
-        ObjectAnimator animation5 = ObjectAnimator.ofFloat(mSetupIb, "scaleY", 0.0f, 1.0f);
-        ObjectAnimator animation6 = ObjectAnimator.ofFloat(mSetupIb, "scaleX", 0.0f, 1.0f);
-        ObjectAnimator animation7 = ObjectAnimator.ofFloat(mListIb, "scaleY", 0.0f, 1.0f);
-        ObjectAnimator animation8 = ObjectAnimator.ofFloat(mListIb, "scaleX", 0.0f, 1.0f);
+        ObjectAnimator animation3 = ObjectAnimator.ofFloat(mBackIb, "scaleY", 1.0f);
+        ObjectAnimator animation4 = ObjectAnimator.ofFloat(mBackIb, "scaleX", 1.0f);
+        ObjectAnimator animation5 = ObjectAnimator.ofFloat(mSetupIb, "scaleY", 1.0f);
+        ObjectAnimator animation6 = ObjectAnimator.ofFloat(mSetupIb, "scaleX", 1.0f);
+        ObjectAnimator animation7 = ObjectAnimator.ofFloat(mListIb, "scaleY", 1.0f);
+        ObjectAnimator animation8 = ObjectAnimator.ofFloat(mListIb, "scaleX", 1.0f);
         AnimatorSet animatorSet = new AnimatorSet();
         if (mTimeTv.getVisibility() == View.GONE) {
             mTimeTv.setVisibility(View.VISIBLE);
@@ -317,7 +340,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             animatorSet.playTogether(animation3, animation4, animation5,
                     animation6, animation7, animation8);
         }
-        animatorSet.setDuration(Const.ANIMATION_LONG_1000).start();
+        animatorSet.setDuration(Const.ANIMATION_LONG_500).start();
     }
 
 

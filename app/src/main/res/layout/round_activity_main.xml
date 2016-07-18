@@ -43,9 +43,11 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="61px"
-        android:visibility="gone">
+        >
 
         <ImageButton
+            android:scaleY="0"
+            android:scaleX="0"
             android:id="@+id/record_setup"
             android:layout_width="58px"
             android:layout_height="58px"
@@ -53,6 +55,8 @@
             android:background="@drawable/setup_selector"/>
 
         <ImageButton
+            android:scaleY="0"
+            android:scaleX="0"
             android:id="@+id/record_list"
             android:layout_width="58px"
             android:layout_height="58px"
@@ -64,6 +68,8 @@
         />
 
         <ImageButton
+            android:scaleY="0"
+            android:scaleX="0"
             android:id="@+id/record_back"
             android:layout_width="58px"
             android:layout_height="58px"
