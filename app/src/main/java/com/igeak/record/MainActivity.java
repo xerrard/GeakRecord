@@ -299,8 +299,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
         //此处的-57一直没搞清楚什么原因，原本应该是-35
 
         AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.playTogether(animation1, animation2, animation3,animation4);
-        animatorSet.addListener(new SimpleAnimatorListener(){
+        animatorSet.playTogether(animation1, animation2, animation3, animation4);
+        animatorSet.addListener(new SimpleAnimatorListener() {
             @Override
             public void onAnimationEnd(Animator animator) {
                 super.onAnimationEnd(animator);
@@ -473,8 +473,15 @@ public class MainActivity extends Activity implements View.OnClickListener {
         if (recorder != null) {
             recorder.release();
             recorder = null;
-            Toast.makeText(getApplicationContext(), getString(R.string.toast_recording_destroy),
-                    Toast.LENGTH_LONG).show();
+            if (state != STATE_WAITING) {
+                Toast.makeText(getApplicationContext(), getString(R.string.toast_recording_destroy),
+                        Toast.LENGTH_LONG).show();
+            } else {
+                deleteFile();
+                Toast.makeText(getApplicationContext(), getString(R.string
+                        .toast_recording_destroy_no_save),
+                        Toast.LENGTH_LONG).show();
+            }
         }
         super.onDestroy();
     }

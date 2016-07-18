@@ -6,17 +6,10 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
-
-
 import android.support.v7.widget.RecyclerView;
-import android.support.wearable.complications.TimeFormatText;
-import android.util.Log;
-import android.view.DragEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -97,9 +90,9 @@ public class WearListActivity extends Activity
 
             @Override
             public void onScrollStateChanged(int var1) {
-                if(var1== RecyclerView.SCROLL_STATE_DRAGGING){
+                if (var1 == RecyclerView.SCROLL_STATE_DRAGGING) {
                     rect.setPressed(true);
-                }else {
+                } else {
                     rect.setPressed(false);
                 }
 

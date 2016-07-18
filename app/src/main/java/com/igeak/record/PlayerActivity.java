@@ -167,7 +167,9 @@ public class PlayerActivity extends Activity implements View.OnClickListener, Me
         if (requestCode == Const.REQUESTCODE_QUERY_DELETE) {
             if (resultCode == Const.RESULTCODE_OK) {
                 try {
-                    pauseMusic(); //先暂停播放
+                    if (state == STATE_PLAYING) {
+                        pauseMusic(); //先暂停播放
+                    }
                     delete();
                     setResult(Const.RESULTCODE_UPDATE);
                 } catch (Exception e) {
