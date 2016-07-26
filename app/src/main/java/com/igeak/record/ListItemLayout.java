@@ -64,7 +64,7 @@ public class ListItemLayout extends FrameLayout
 
     @Override
     public void onCenterPosition(boolean animate) {
-        float scale = (Math.abs(getY() - 121)) / 60.0f;   //这个我们称之为偏离度
+        float scale = (Math.abs(getY() - getHeight())) / (getHeight() / 2);   //这个我们称之为偏离度
 
         mNameTv.setScaleX(1.55f - 0.55f * scale);
         mNameTv.setScaleY(1.55f - 0.55f * scale);

@@ -364,11 +364,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private void recordAnimation3() {
         ObjectAnimator animator1 = ObjectAnimator.ofFloat(mRecordMidTv, "alpha", 0f, 1f);
         animator1.setRepeatCount(ObjectAnimator.INFINITE);
-        animator1.setDuration(Const.ANIMATION_LONG_2000);
-        ObjectAnimator animator2 = ObjectAnimator.ofFloat(mRecordMidTv, "alpha", 0f, 1f);
+        animator1.setDuration(Const.ANIMATION_LONG_1000);
+
+        ObjectAnimator animator2 = ObjectAnimator.ofFloat(mRecordOutTv, "alpha", 0f, 1f);
         animator2.setRepeatCount(ObjectAnimator.INFINITE);
-        animator2.setDuration(Const.ANIMATION_LONG_2000);
-        ObjectAnimator.ofFloat(mRecordOutTv, "alpha", 0f, 1f).setRepeatCount(10);
+        animator2.setDuration(Const.ANIMATION_LONG_1000);
+
         AnimatorSet set = new AnimatorSet();
         set.playTogether(animator1, animator2);
         set.start();
