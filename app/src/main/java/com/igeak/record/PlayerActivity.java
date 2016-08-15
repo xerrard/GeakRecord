@@ -88,10 +88,9 @@ public class PlayerActivity extends Activity implements View.OnClickListener, Me
 
     private void showFileInfo(File file) {
 
-        String dateString = file.getName().substring(3);
+        String dateString = file.getName().substring(3,17);
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
-
         //SimpleDateFormat tf = new SimpleDateFormat("mm:ss");
 
 
@@ -108,6 +107,10 @@ public class PlayerActivity extends Activity implements View.OnClickListener, Me
             String timeText = sdfName.format(date);
 
             player = MediaPlayer.create(this, Uri.fromFile(file));
+            if (player == null) {
+                delete();
+                finish();
+            }
             player.setOnPreparedListener(PlayerActivity.this);
             player.setOnErrorListener(PlayerActivity.this);
             player.setOnCompletionListener(PlayerActivity.this);
@@ -124,9 +127,24 @@ public class PlayerActivity extends Activity implements View.OnClickListener, Me
             }
             String duration = tf.format(durationInt);
 
-            String name = getString(R.string.record)
-                    + " " + String.format("%02d", currentIndex + 1);
-            mCurrentFileName.setText(name);
+
+//            String name = getString(R.string.record)
+//                    + " " + String.format("%02d", currentIndex + 1);
+
+            if(file.getName().length()>21){
+                String str = file.getName().substring(24);
+                String[] strings = str.split("\\.");
+                String nameIndexString = strings[0];
+                long nameIndex = Long.parseLong(nameIndexString);
+                String name = getString(R.string.record)
+                        + " " + String.format("%02d", nameIndex);
+                mCurrentFileName.setText(name);
+            }
+            else{
+                String name = getString(R.string.record);
+                mCurrentFileName.setText(name);
+            }
+
             mCurrentFileDate.setText(dateText);
             mCurrentFileTime.setText(timeText);
             mCurrentFileDuration.setText(duration);
@@ -171,7 +189,6 @@ public class PlayerActivity extends Activity implements View.OnClickListener, Me
                         pauseMusic(); //先暂停播放
                     }
                     delete();
-                    setResult(Const.RESULTCODE_UPDATE);
                 } catch (Exception e) {
                     Log.e(MainActivity.LOG_TAG, "delete Record failed " + e.getMessage());
                 }
@@ -186,8 +203,10 @@ public class PlayerActivity extends Activity implements View.OnClickListener, Me
 
     @Override
     protected void onDestroy() {
-        player.release(); //释放播放器资源
-        player = null;
+        if (player != null) {
+            player.release(); //释放播放器资源
+            player = null;
+        }
         super.onDestroy();
     }
 
@@ -240,6 +259,7 @@ public class PlayerActivity extends Activity implements View.OnClickListener, Me
         if (currentFile.exists()) {
             currentFile.delete();
         }
+        setResult(Const.RESULTCODE_UPDATE);
     }
 
 

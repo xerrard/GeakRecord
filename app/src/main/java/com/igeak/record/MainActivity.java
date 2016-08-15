@@ -4,7 +4,9 @@ import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -421,6 +423,21 @@ public class MainActivity extends Activity implements View.OnClickListener {
     }
 
 
+    private void setNameDataBase(long nameindex) {
+        SharedPreferences sharedPreferences = getSharedPreferences("record_name", Context
+                .MODE_PRIVATE); //私有数据
+        SharedPreferences.Editor editor = sharedPreferences.edit();//获取编辑器
+        editor.putLong("name", nameindex);
+        editor.commit();//提交修改
+    }
+
+    private long getNameDataBase() {
+        SharedPreferences sharedPreferences = getSharedPreferences("record_name", Context
+                .MODE_PRIVATE); //私有数据
+        long currentName = sharedPreferences.getLong("name", 0);
+        return currentName;
+    }
+
     private void mediaRecording() {
         createFilePath();
         try {
@@ -430,7 +447,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
             recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
             String currentDateandTime = sdf.format(new Date());
-            String fileName = FILE_PATH + "/REC" + currentDateandTime + ".amr";
+            long currentNameIndex = getNameDataBase() + 1; //文件名中加一个参数
+            String fileName = FILE_PATH + "/REC" + currentDateandTime + "_record" + currentNameIndex
+                    + ".amr";
+            setNameDataBase(currentNameIndex);
             Log.d(LOG_TAG, "filename: " + fileName);
             this.currentFileName = fileName;
             recorder.setOutputFile(fileName);
@@ -465,6 +485,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         File file = new File(MainActivity.this.currentFileName);
         if (file.exists()) {
             file.delete();
+            setNameDataBase(getNameDataBase() - 1); //如果不保存，要恢复原有数据index
         }
 
     }
@@ -480,7 +501,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             } else {
                 deleteFile();
                 Toast.makeText(getApplicationContext(), getString(R.string
-                        .toast_recording_destroy_no_save),
+                                .toast_recording_destroy_no_save),
                         Toast.LENGTH_LONG).show();
             }
         }

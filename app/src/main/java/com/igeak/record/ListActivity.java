@@ -143,7 +143,7 @@ public class ListActivity extends Activity implements View.OnClickListener {
 
     private void showFileInfo(File file) {
 
-        String dateString = file.getName().substring(3);
+        String dateString = file.getName().substring(3,17);
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
 

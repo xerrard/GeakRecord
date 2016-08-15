@@ -252,7 +252,7 @@ public class WearListActivity extends Activity
             int currentIndex = position;
 
             File file = files[currentIndex];
-            String dateString = file.getName().substring(3);
+            String dateString = file.getName().substring(3,17);
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
 
@@ -277,9 +277,22 @@ public class WearListActivity extends Activity
                 }
                 String duration = tf.format(time);
 
-                String name = mContext.getString(R.string.record)
-                        + " " + String.format("%02d", currentIndex + 1);
-                itemHolder.mNameTv.setText(name);
+//                String name = mContext.getString(R.string.record)
+//                        + " " + String.format("%02d", currentIndex + 1);
+                if(file.getName().length()>21){
+                    String str = file.getName().substring(24);
+                    String[] strings = str.split("\\.");
+                    String nameIndexString = strings[0];
+                    long nameIndex = Long.parseLong(nameIndexString);
+                    String name = mContext.getString(R.string.record)
+                            + " " + String.format("%02d", nameIndex);
+                    itemHolder.mNameTv.setText(name);
+                }
+                else{
+                    String name = mContext.getString(R.string.record);
+                    itemHolder.mNameTv.setText(name);
+                }
+
                 //itemHolder.mSmallNameupTv.setText(name);
                 itemHolder.mDateTv.setText(dateText);
                 itemHolder.mTimeTv.setText(timeText);
