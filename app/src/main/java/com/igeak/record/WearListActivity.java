@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.FileObserver;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,7 +36,7 @@ public class WearListActivity extends Activity
     WearableListView listView;
     MyListAdapter myListAdapter;
     private int mInitialHeaderHeight;
-
+    FileObserver fileObserver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,8 +106,28 @@ public class WearListActivity extends Activity
         });
         mImgRecordRl.addOnLayoutChangeListener(this);
         listView.addOnLayoutChangeListener(this);
+        fileObserver = new FileObserver(MainActivity.FILE_PATH, FileObserver.DELETE) {
+            @Override
+            public void onEvent(int event, String path) {
+                if (event == FileObserver.DELETE) {
+                    myListAdapter.setFiles(getAllRecordFileNames());
+                    listView.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            myListAdapter.notifyDataSetChanged();
+                        }
+                    });
+                }
+            }
+        };
+        fileObserver.startWatching();
 
+    }
 
+    @Override
+    protected void onDestroy() {
+        fileObserver.stopWatching();
+        super.onDestroy();
     }
 
     @Override
@@ -252,7 +273,7 @@ public class WearListActivity extends Activity
             int currentIndex = position;
 
             File file = files[currentIndex];
-            String dateString = file.getName().substring(3,17);
+            String dateString = file.getName().substring(3, 17);
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
 
@@ -279,7 +300,7 @@ public class WearListActivity extends Activity
 
 //                String name = mContext.getString(R.string.record)
 //                        + " " + String.format("%02d", currentIndex + 1);
-                if(file.getName().length()>21){
+                if (file.getName().length() > 21) {
                     String str = file.getName().substring(24);
                     String[] strings = str.split("\\.");
                     String nameIndexString = strings[0];
@@ -287,8 +308,7 @@ public class WearListActivity extends Activity
                     String name = mContext.getString(R.string.record)
                             + " " + String.format("%02d", nameIndex);
                     itemHolder.mNameTv.setText(name);
-                }
-                else{
+                } else {
                     String name = mContext.getString(R.string.record);
                     itemHolder.mNameTv.setText(name);
                 }
