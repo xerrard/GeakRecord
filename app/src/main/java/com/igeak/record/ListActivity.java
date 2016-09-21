@@ -20,6 +20,7 @@ import java.util.Date;
 
 /**
  * Created by xuqiang on 16-6-29.
+ * 用于第一次没有list的方案
  */
 public class ListActivity extends Activity implements View.OnClickListener {
     File[] files;

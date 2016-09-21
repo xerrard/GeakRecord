@@ -81,7 +81,6 @@ public class WearListActivity extends Activity
             @Override
             public void onScroll(int var1) {
                 adjustHeaderTranslation();
-                //rect.setPressed(true);
             }
 
             @Override
@@ -198,8 +197,8 @@ public class WearListActivity extends Activity
         if ((Const.REQUESTCODE_PLAYER == requestCode) && (Const.RESULTCODE_UPDATE == resultCode)) {
             files = getAllRecordFileNames();
             if (files == null || files.length == 0) {
-                Toast.makeText(getApplicationContext(), getString(R.string.toast_file_not_exist),
-                        Toast.LENGTH_LONG).show();
+//                Toast.makeText(getApplicationContext(), getString(R.string.toast_file_not_exist),
+//                        Toast.LENGTH_LONG).show();
                 finish();
             }
             myListAdapter.setFiles(files);
@@ -273,7 +272,7 @@ public class WearListActivity extends Activity
             int currentIndex = position;
 
             File file = files[currentIndex];
-            String dateString = file.getName().substring(3, 17);
+            String dateString = file.getName().substring(3,17);
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
 
@@ -287,6 +286,9 @@ public class WearListActivity extends Activity
                 String timeText = sdfName.format(date);
 
                 MediaPlayer player = MediaPlayer.create(mContext, Uri.fromFile(file));
+                if(player==null){
+                    return;
+                }
                 int time = player.getDuration();
                 player.release();
 
@@ -300,7 +302,7 @@ public class WearListActivity extends Activity
 
 //                String name = mContext.getString(R.string.record)
 //                        + " " + String.format("%02d", currentIndex + 1);
-                if (file.getName().length() > 21) {
+                if(file.getName().length()>21){
                     String str = file.getName().substring(24);
                     String[] strings = str.split("\\.");
                     String nameIndexString = strings[0];
@@ -308,7 +310,8 @@ public class WearListActivity extends Activity
                     String name = mContext.getString(R.string.record)
                             + " " + String.format("%02d", nameIndex);
                     itemHolder.mNameTv.setText(name);
-                } else {
+                }
+                else{
                     String name = mContext.getString(R.string.record);
                     itemHolder.mNameTv.setText(name);
                 }
@@ -321,9 +324,11 @@ public class WearListActivity extends Activity
 
             } catch (Exception e) {
                 e.printStackTrace();
+            } finally {
+                holder.itemView.setTag(position);
             }
 
-            holder.itemView.setTag(position);
+
         }
 
         // Return the size of your dataset

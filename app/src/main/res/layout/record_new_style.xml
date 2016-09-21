@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/background"
+                android:orientation="vertical" tools:context=".RecordActivity">
+    <ImageView
+        android:layout_alignParentTop="true"
+        android:layout_width="90px"
+        android:layout_height="90px"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30px"
+        android:background="@drawable/record_90_90"
+    />
+
+    <Chronometer
+        android:id="@+id/time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="150px"
+        android:includeFontPadding="false"
+        android:textColor="@color/white"
+        android:textSize="66px"
+    />
+
+    <ImageButton
+        android:id="@+id/record_list"
+        android:layout_width="72px"
+        android:layout_height="72px"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="40px"
+        android:layout_marginLeft="86px"
+        android:background="@drawable/list_selector"/>
+
+    <ImageButton
+        android:id="@+id/record_setup"
+        android:layout_width="72px"
+        android:layout_height="72px"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="40px"
+        android:layout_marginRight="86px"
+        android:background="@drawable/setup_selector"/>
+</RelativeLayout>

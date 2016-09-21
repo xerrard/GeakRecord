@@ -31,11 +31,7 @@ public class QueryDelete extends ConfirmationActivity {
         finish();
     }
 
-    @Override
-    protected void onDestroy() {
 
-        super.onDestroy();
-    }
 }
 
 

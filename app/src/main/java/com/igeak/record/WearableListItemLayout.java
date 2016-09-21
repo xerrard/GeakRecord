@@ -80,9 +80,6 @@ public class WearableListItemLayout extends FrameLayout
     }
 
     private void initAnimation() {
-        /**
-         * 进入中心的动画
-         */
         ObjectAnimator animation1 = ObjectAnimator.ofFloat(mNameTv, "scaleY", 1.55f);
         ObjectAnimator animation2 = ObjectAnimator.ofFloat(mNameTv, "scaleX", 1.55f);
         ObjectAnimator animation3 = ObjectAnimator.ofFloat(mNameTv, "translationY", -40.0f);
@@ -100,9 +97,6 @@ public class WearableListItemLayout extends FrameLayout
         animatorSetCenterInfo.setDuration(ANIMATION_LONG);
 
 
-        /**
-         *从中心到边缘的动画
-         */
         animatorSetNoCenter = new AnimatorSet();
         ObjectAnimator animationb1 = ObjectAnimator.ofFloat(mNameTv, "scaleY", 1.0f);
         ObjectAnimator animationb2 = ObjectAnimator.ofFloat(mNameTv, "scaleX", 1.0f);

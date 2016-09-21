@@ -88,9 +88,10 @@ public class PlayerActivity extends Activity implements View.OnClickListener, Me
 
     private void showFileInfo(File file) {
 
-        String dateString = file.getName().substring(3,17);
+        String dateString = file.getName().substring(3, 17);
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+
         //SimpleDateFormat tf = new SimpleDateFormat("mm:ss");
 
 
@@ -109,6 +110,7 @@ public class PlayerActivity extends Activity implements View.OnClickListener, Me
             player = MediaPlayer.create(this, Uri.fromFile(file));
             if (player == null) {
                 delete();
+                Toast.makeText(getApplicationContext(), R.string.toast_bad_file_deleted, Toast.LENGTH_LONG).show();
                 finish();
             }
             player.setOnPreparedListener(PlayerActivity.this);
@@ -131,7 +133,7 @@ public class PlayerActivity extends Activity implements View.OnClickListener, Me
 //            String name = getString(R.string.record)
 //                    + " " + String.format("%02d", currentIndex + 1);
 
-            if(file.getName().length()>21){
+            if (file.getName().length() > 21) {
                 String str = file.getName().substring(24);
                 String[] strings = str.split("\\.");
                 String nameIndexString = strings[0];
@@ -139,8 +141,7 @@ public class PlayerActivity extends Activity implements View.OnClickListener, Me
                 String name = getString(R.string.record)
                         + " " + String.format("%02d", nameIndex);
                 mCurrentFileName.setText(name);
-            }
-            else{
+            } else {
                 String name = getString(R.string.record);
                 mCurrentFileName.setText(name);
             }
@@ -212,9 +213,9 @@ public class PlayerActivity extends Activity implements View.OnClickListener, Me
 
     private void resumeMusic() {
         if (!isBlueToothHeadsetConnected()) {
-//            Toast.makeText(PlayerActivity.this, R.string.toast_play_bt_headset, Toast.LENGTH_LONG)
-//                    .show();
-            //return;
+            Toast.makeText(PlayerActivity.this, R.string.toast_play_bt_headset, Toast.LENGTH_LONG)
+                    .show();
+            return;
         }
 //        try {
 //            player.prepare();
@@ -231,11 +232,11 @@ public class PlayerActivity extends Activity implements View.OnClickListener, Me
     }
 
     private void playMusic() {
-        if (!isBlueToothHeadsetConnected()) {
+//        if (!isBlueToothHeadsetConnected()) {
 //            Toast.makeText(PlayerActivity.this, R.string.toast_play_bt_headset, Toast.LENGTH_LONG)
 //                    .show();
-            //return;
-        }
+//            return;
+//        }
         player.start();
         task = new MediaObserver();
         task.execute();

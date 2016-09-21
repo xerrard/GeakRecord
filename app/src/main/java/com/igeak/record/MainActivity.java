@@ -125,7 +125,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             }
         } else if (state == STATE_RECORDING) {
             if (view.getId() == R.id.record_back) {
-                //queryStopRecord(); //修改需求，不再确认，点击Back直接取消录音
+                //queryStopRecord();
                 deleteFile();
                 stopRecordToInit();
             } else if (view.getId() == R.id.record_setup) {
@@ -301,8 +301,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
         //此处的-57一直没搞清楚什么原因，原本应该是-35
 
         AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.playTogether(animation1, animation2, animation3, animation4);
-        animatorSet.addListener(new SimpleAnimatorListener() {
+        animatorSet.playTogether(animation1, animation2, animation3,animation4);
+        animatorSet.addListener(new SimpleAnimatorListener(){
             @Override
             public void onAnimationEnd(Animator animator) {
                 super.onAnimationEnd(animator);
