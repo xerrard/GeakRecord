@@ -48,7 +48,6 @@ public class WearListActivity extends Activity
             finish();
         }
         setContentView(R.layout.my_list_activity);
-        final ImageView rect = (ImageView) findViewById(R.id.rect);
 
         mImgRecordRl = (RelativeLayout) findViewById(R.id.item_img_rl);
         // Get the list component from the layout of the activity
@@ -90,12 +89,6 @@ public class WearListActivity extends Activity
 
             @Override
             public void onScrollStateChanged(int var1) {
-                if (var1 == RecyclerView.SCROLL_STATE_DRAGGING) {
-                    rect.setPressed(true);
-                } else {
-                    rect.setPressed(false);
-                }
-
             }
 
             @Override
@@ -176,6 +169,7 @@ public class WearListActivity extends Activity
     @Override
     public void onClick(WearableListView.ViewHolder v) {
         Integer tag = (Integer) v.itemView.getTag();
+        v.itemView.setPressed(true); //增加按压效果
         // use this data to complete some action ...
         playMusic(tag);
     }
@@ -186,7 +180,7 @@ public class WearListActivity extends Activity
     }
 
     private void playMusic(int currentIndex) {
-        Intent intent = new Intent(this, PlayerActivity.class);
+        Intent intent = new Intent(this, PlayerNewActivity.class);
         intent.putExtra("index", currentIndex);
         startActivityForResult(intent, Const.REQUESTCODE_PLAYER);
     }

@@ -33,4 +33,6 @@
     <string name="debug_date">2015/03/15</string>
     <string name="debug_time">AM 08:30</string>
     <string name="debug_durate">00:30</string>
+
+    <string name="record_list">Record list</string>
 </resources>

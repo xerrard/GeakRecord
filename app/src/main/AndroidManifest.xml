@@ -14,7 +14,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@android:style/Theme.DeviceDefault">
+        android:theme="@style/MyStyle">
         <activity
             android:name=".RecordActivity"
             android:label="@string/app_name"
@@ -27,7 +27,7 @@
 
         </activity>
         <!--<activity android:name=".ListActivity"/>-->
-        <activity android:name=".PlayerActivity"/>
+        <activity android:name=".PlayerNewActivity"/>
         <activity android:name=".QueryDelete"/>
         <activity android:name=".QuerySave"/>
         <activity android:name=".QueryStopRecord"/>

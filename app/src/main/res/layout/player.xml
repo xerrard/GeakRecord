@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
              android:layout_width="match_parent"
-             android:layout_height="match_parent">
+             android:layout_height="match_parent"
+             android:background="@drawable/background">
     <com.igeak.record.CircleSrcView
         android:id="@+id/circle"
         android:layout_width="match_parent"
@@ -21,24 +22,24 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="75px"
+            android:includeFontPadding="false"
             android:textColor="#F77D27"
-            android:textSize="24px"
-            android:includeFontPadding="false"/>
+            android:textSize="24px"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="25px"
             android:layout_marginBottom="25px"
+            android:layout_marginTop="25px"
             android:gravity="center_horizontal"
             android:orientation="horizontal">
             <TextView
                 android:id="@+id/play_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:includeFontPadding="false"
                 android:textColor="#FFF"
                 android:textSize="22px"
-                android:includeFontPadding="false"
             />
             <TextView
                 android:id="@+id/play_time"
@@ -46,9 +47,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="23px"
                 android:gravity="center"
+                android:includeFontPadding="false"
                 android:textColor="#FFF"
-                android:textSize="22px"
-                android:includeFontPadding="false"/>
+                android:textSize="22px"/>
         </LinearLayout>
 
         <LinearLayout
@@ -69,9 +70,9 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginLeft="16px"
+                android:includeFontPadding="false"
                 android:textColor="#FFF"
-                android:textSize="24px"
-                android:includeFontPadding="false"/>
+                android:textSize="24px"/>
         </LinearLayout>
 
         <LinearLayout
@@ -90,9 +91,9 @@
 
             <ImageButton
                 android:id="@+id/play_delete"
-                android:layout_marginLeft="45px"
                 android:layout_width="60px"
                 android:layout_height="60px"
+                android:layout_marginLeft="45px"
                 android:background="@drawable/delete_selector"
             />
         </LinearLayout>

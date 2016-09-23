@@ -4,7 +4,8 @@
     android:id="@+id/frame_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/background">
     <!--app:layout_box="left|top|bottom|right"-->
     <com.igeak.record.WearableListView
         android:id="@+id/wearable_list"
@@ -19,21 +20,14 @@
 
     >
 
-        <ImageView
-            android:layout_width="59px"
-            android:layout_height="59px"
-            android:layout_centerInParent="true"
-            android:background="@drawable/smallrecord"
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                  android:layout_centerInParent="true"
+                  android:text="@string/record_list"
+                  android:textColor="@color/list_head_color"
+                  android:textSize="@dimen/list_head_text_size"
         />
     </RelativeLayout>
 
-    <ImageView
-        android:id="@+id/rect"
-        android:layout_width="match_parent"
-        android:layout_height="163px"
-        android:layout_gravity="center"
-        android:background="@drawable/rect_selector"
-    />
 
 </FrameLayout>
 

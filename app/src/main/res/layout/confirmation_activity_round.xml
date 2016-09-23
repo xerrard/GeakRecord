@@ -61,7 +61,7 @@
             android:layout_gravity="center|left|top"
             android:layout_marginLeft="45dip"
             android:layout_marginTop="5dip"
-            android:background="@drawable/cancel_button" />
+            android:background="@drawable/dismiss_button_selector" />
 
         <Button
             android:id="@+id/confirmation_confirm_button"
@@ -70,7 +70,7 @@
             android:layout_gravity="center|right|top"
             android:layout_marginRight="45dip"
             android:layout_marginTop="5dip"
-            android:background="@drawable/confirm_button" />
+            android:background="@drawable/confirm_button_selector" />
     </FrameLayout>
 
 </FrameLayout>

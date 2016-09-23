@@ -2,7 +2,9 @@
 <com.igeak.record.ListItemLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@drawable/rect_selector">
+
 
     <RelativeLayout
         android:id="@+id/item_detail_rl"
@@ -15,7 +17,7 @@
             android:layout_centerInParent="true"
             android:includeFontPadding="false"
             android:text="@string/debug_recordname"
-            android:textColor="#FFF"
+            android:textColor="@color/list_item_white"
             android:textSize="18px"/>
 
         <LinearLayout
@@ -23,9 +25,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="46px"
+            android:alpha="0"
             android:gravity="center_horizontal"
             android:orientation="horizontal"
-            android:alpha="0"
         >
             <TextView
                 android:id="@+id/record_date"
@@ -33,7 +35,7 @@
                 android:layout_height="wrap_content"
                 android:includeFontPadding="false"
                 android:text="@string/debug_date"
-                android:textColor="#F77D27"
+                android:textColor="@color/list_item_gray"
                 android:textSize="24px"
             />
             <TextView
@@ -43,7 +45,7 @@
                 android:layout_marginLeft="21px"
                 android:includeFontPadding="false"
                 android:text="@string/debug_time"
-                android:textColor="#F77D27"
+                android:textColor="@color/list_item_gray"
                 android:textSize="24px"/>
         </LinearLayout>
 
@@ -53,15 +55,14 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/datetime_ll"
             android:layout_marginTop="18px"
-            android:gravity="center_horizontal"
-            android:orientation="horizontal"
             android:alpha="0"
+            android:gravity="center"
+            android:orientation="horizontal"
         >
             <ImageView
                 android:id="@+id/record_duration_img"
-                android:layout_width="38px"
-                android:layout_height="27px"
-                android:layout_gravity="center"
+                android:layout_width="34px"
+                android:layout_height="33px"
                 android:background="@drawable/micro"
             />
             <TextView
@@ -74,25 +75,6 @@
                 android:textSize="24px"/>
         </LinearLayout>
     </RelativeLayout>
-
-
-    <!--<RelativeLayout-->
-        <!--android:id="@+id/item_info_rl"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="120px"-->
-        <!--android:visibility="gone"-->
-
-    <!--&gt;-->
-        <!--<TextView-->
-            <!--android:id="@+id/record_name_small"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_centerInParent="true"-->
-            <!--android:includeFontPadding="false"-->
-            <!--android:textSize="18px"-->
-
-        <!--/>-->
-    <!--</RelativeLayout>-->
 
 
 </com.igeak.record.ListItemLayout>

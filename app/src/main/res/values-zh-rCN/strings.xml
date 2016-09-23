@@ -24,4 +24,7 @@
     <string name="toast_play_bt_headset">请连接蓝牙耳机！</string>
     <string name="toast_bad_file_deleted">此录音文件已损坏，已为您删除</string>
     <string name="record">录音</string>
+
+
+    <string name="record_list">录音列表</string>
 </resources>

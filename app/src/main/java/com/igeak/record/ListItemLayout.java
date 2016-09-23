@@ -65,7 +65,7 @@ public class ListItemLayout extends FrameLayout
     @Override
     public void onCenterPosition(boolean animate) {
         float scale = (Math.abs(getY() - getHeight())) / (getHeight() / 2);   //这个我们称之为偏离度
-
+        mNameTv.setTextColor(getResources().getColor(R.color.list_item_white));
         mNameTv.setScaleX(1.55f - 0.55f * scale);
         mNameTv.setScaleY(1.55f - 0.55f * scale);
         mNameTv.setTranslationY(-40.0f + 40.0f * scale);
@@ -85,7 +85,7 @@ public class ListItemLayout extends FrameLayout
 
     @Override
     public void onNonCenterPosition(boolean animate) {
-
+        mNameTv.setTextColor(getResources().getColor(R.color.list_item_gray));
         mNameTv.setScaleX(1.0f);
         mNameTv.setScaleY(1.0f);
         mNameTv.setTranslationY(0.0f);

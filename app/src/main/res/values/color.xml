@@ -5,7 +5,10 @@
     <color name="dark_progress_color">#fff77d27</color>
     <color name="light_bg_color">#ff000000</color>
     <color name="dark_bg_color">#ff3e3c42</color>
-    
+    <color name="list_head_color">#79f57c</color>
+    <color name="list_item_white">#ffffff</color>
+    <color name="list_item_gray">#9d9d9d</color>
+
 <color name="action_button_background">#4D000000</color>
     <color name="ambient_mode_text">@color/primary_text_dark</color>
     <color name="black">#000000</color>

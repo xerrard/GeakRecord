@@ -2,4 +2,5 @@
 <resources>
     <!-- confirm dialog -->
     <dimen name="conf_diag_floating_height">16.0dip</dimen>
+    <dimen name="list_head_text_size">36px</dimen>
 </resources>

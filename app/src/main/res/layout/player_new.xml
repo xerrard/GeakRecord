@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/background"
+                android:orientation="vertical" tools:context=".PlayerActivity">
+    <ImageView
+        android:layout_width="90px"
+        android:layout_height="90px"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30px"
+        android:background="@drawable/record_90_90"
+    />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="65px"
+        android:layout_marginRight="65px"
+        android:layout_marginTop="150px">
+        <ImageView
+            android:layout_width="34px"
+            android:layout_height="33px"
+            android:background="@drawable/micro"
+        />
+
+        <TextView
+            android:id="@+id/play_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="48px"
+            android:includeFontPadding="false"
+            android:textColor="@color/list_item_white"
+            android:textSize="24px"/>
+
+        <TextView
+            android:id="@+id/play_duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:includeFontPadding="false"
+            android:textColor="@color/list_item_white"
+            android:textSize="24px"
+        />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="113px"
+        android:layout_marginTop="188px"
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/play_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:includeFontPadding="false"
+            android:textColor="@color/list_item_gray"
+            android:textSize="18px"
+        />
+        <TextView
+            android:id="@+id/play_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="6px"
+            android:layout_toRightOf="@id/play_date"
+            android:includeFontPadding="false"
+            android:singleLine="true"
+            android:textColor="@color/list_item_gray"
+            android:textSize="18px"/>
+    </RelativeLayout>
+
+
+    <ImageButton
+        android:id="@+id/play_setup"
+        android:layout_width="72px"
+        android:layout_height="72px"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="40px"
+        android:layout_marginLeft="86px"
+        android:background="@drawable/play_selector"/>
+
+    <ImageButton
+        android:id="@+id/play_delete"
+        android:layout_width="72px"
+        android:layout_height="72px"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="40px"
+        android:layout_marginRight="86px"
+        android:background="@drawable/delete_selector"/>
+</RelativeLayout>
